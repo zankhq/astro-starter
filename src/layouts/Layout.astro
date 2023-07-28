@@ -1,0 +1,72 @@
+---
+import { SEO } from "astro-seo";
+import Footer from "@components/footer.astro";
+import Navbar from "@components/navbar.astro";
+import { HeadHrefLangs } from "astro-i18next/components";
+import i18next from "i18next";
+import { pwaInfo } from "virtual:pwa-info";
+import "@fontsource-variable/inter";
+
+export interface Props {
+	title: string;
+	lang: string;
+}
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+
+const resolvedImageWithDomain = new URL("/meta/opengraph.png", Astro.site).toString();
+
+// replaced dynamically
+const buildDate = __DATE__;
+
+const { title, lang = null } = Astro.props;
+
+const makeTitle = title ? title + " | " + "Astro starter" : "Astro starter template with Tailwind CSS and alpine js";
+---
+
+<!DOCTYPE html>
+<html lang={lang ?? i18next.language}>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="theme-color" content="#ffffff">
+		<HeadHrefLangs />
+
+		<!-- Global CSS -->
+		<link rel="stylesheet" href="/index.css" />
+
+		<SEO
+			title={makeTitle}
+			description="Astro starter template with TailwindCSS and alpine js."
+			canonical={canonicalURL}
+			openGraph={{
+				basic: {
+					url: canonicalURL,
+					type: "website",
+					title: `Astro Starter Template`,
+					image: resolvedImageWithDomain,
+				},
+				image: {
+					alt: "Astro Homepage Screenshot",
+				},
+			}}
+		/>
+
+		{pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
+		<script src="/src/pwa.ts"></script>
+	</head>
+	<body>
+		<Navbar />
+		<slot />
+		<Footer />
+		<style is:global>
+			/* Improve Page speed */
+			/* https://css-tricks.com/almanac/properties/c/content-visibility/ */
+			img {
+				content-visibility: auto;
+			}
+		</style>
+	</body>
+</html>

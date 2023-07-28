@@ -1,0 +1,10 @@
+{
+	"hero": {
+		"title": "Sviluppo web potenziato!",
+		"subtitle": "Liberare il Potere del Web: Combina Astro, Tailwind CSS e Alpine.js per Semplificare il Tuo Processo di Sviluppo Web."
+	},
+	"blog": {
+		"prev": "Precedente",
+		"next": "Successiva"
+	}
+}

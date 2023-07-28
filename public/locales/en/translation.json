@@ -1,0 +1,10 @@
+{
+	"hero": {
+		"title": "Supercharged web development!",
+		"subtitle": "Unleashing the Power of the Web: Combines Astro, Tailwind CSS and Alpine.js to Streamline Your Web Development Process."
+	},
+	"blog": {
+		"prev": "Prev",
+		"next": "Next"
+	}
+}

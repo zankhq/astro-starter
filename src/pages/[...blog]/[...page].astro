@@ -1,0 +1,47 @@
+---
+import i18next, { changeLanguage } from "i18next";
+import { getCollection } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import Posts from "@components/blog/posts.astro";
+import Pagination from "@components/blog/pagination.astro";
+
+changeLanguage("en");
+
+export async function getStaticPaths({ paginate }) {changeLanguage('en')
+    var posts = await getCollection("blog", ({ data }) => {
+        return !data.draft;
+    });
+    // Preprocess the posts to split the slugs and get the languages
+    var processedPosts = posts.map((post) => {
+        const [...slug] = post.slug.split("/");
+        let lang = i18next.language;
+        var firstSlug = post.slug.match(/^([^\/]*)\//);
+        if (firstSlug) {
+            lang = firstSlug[1];
+        }
+        return {
+            ...post,
+            slug: slug.join("/"),
+            lang: lang,
+        };
+    });
+    // Filter posts based on the current language
+    const localizedPosts = processedPosts.filter((post) => post.lang === i18next.language);
+    localizedPosts.sort(function (a, b) {
+        return b.data.publishDate.valueOf() - a.data.publishDate.valueOf();
+    });
+    return paginate(localizedPosts, {
+        params: { blog: "blog" || undefined },
+        pageSize: 4,
+    });
+}
+const { page } = Astro.props;
+---
+
+<Layout title="Blog">
+	<Container>
+		<Posts posts={page.data} />
+		<Pagination class="mt-20" prevUrl={page.url.prev} nextUrl={page.url.next} />
+	</Container>
+</Layout>

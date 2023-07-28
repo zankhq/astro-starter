@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: http://astros.warps.it/sitemap-index.xml
