@@ -32,4 +32,4 @@ If you use netlify it's actually easier, you will need to change in the file `as
 
 ---
 
-<p align="right"><a href="https://zank.studio" target="_blank">[warps.it](https://zank.studio/)</p>
+<p align="right"><a href="https://zank.studio" target="_blank">zank.studio</p>
