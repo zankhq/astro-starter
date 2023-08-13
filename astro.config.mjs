@@ -2,9 +2,6 @@ import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
-import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import { autolinkConfig } from "./plugins/rehype-autolink-config";
-import rehypeSlug from "rehype-slug";
 import NetlifyCMS from "astro-netlify-cms";
 import astroI18next from "astro-i18next";
 import alpinejs from "@astrojs/alpinejs";
@@ -12,7 +9,7 @@ import AstroPWA from "@vite-pwa/astro";
 
 // https://astro.build/config
 export default defineConfig({
-	site: "https://astros.warps.it",
+	site: "https://astrostarter.zank.studio",
 	vite: {
 		define: {
 			__DATE__: `'${new Date().toISOString()}'`,
@@ -26,9 +23,9 @@ export default defineConfig({
 			config: {
 				backend: {
 					name: "github",
-					repo: "warpsi/astros",
+					repo: "zanhq/astro-starter",
 					branch: "main",
-					base_url: "https://astros-7h0.pages.dev",
+					base_url: "https://astrostarter.zank.studio",
 					auth_endpoint: "/api/auth",
 				},
 				media_folder: "public/images",
@@ -62,8 +59,8 @@ export default defineConfig({
 			includeAssets: ["favicon.svg"],
 			registerType: "autoUpdate",
 			manifest: {
-				name: "Astros - Starter Template for Astro with Tailwind CSS",
-				short_name: "Astros",
+				name: "Astro starter with tailwind, alpine and i18n support.",
+				short_name: "Astro starter",
 				theme_color: "#ffffff",
 				icons: [
 					{
@@ -86,20 +83,17 @@ export default defineConfig({
 			},
 			workbox: {
 				navigateFallback: "/404",
-				globPatterns: ["**/*.{css,js,html,svg,png,ico,txt}"],
+				globPatterns: ["*.js"],
 			},
 			devOptions: {
 				enabled: true,
 				navigateFallbackAllowlist: [/^\/404$/],
+				suppressWarnings: true,
 			},
 		}),
 	],
-	markdown: {
-		rehypePlugins: [
-			rehypeSlug,
-			// This adds links to headings
-			[rehypeAutolinkHeadings, autolinkConfig],
-		],
+	experimental: {
+		assets: true,
+		viewTransitions: true,
 	},
-	experimental: { assets: true },
 });
