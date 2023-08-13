@@ -6,18 +6,16 @@ import { HeadHrefLangs } from "astro-i18next/components";
 import i18next from "i18next";
 import { pwaInfo } from "virtual:pwa-info";
 import "@fontsource-variable/inter";
+import { ViewTransitions } from "astro:transitions";
 
 export interface Props {
-	title: string;
-	lang: string;
+	title?: string;
+	lang?: string;
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
 
 const resolvedImageWithDomain = new URL("/meta/opengraph.png", Astro.site).toString();
-
-// replaced dynamically
-const buildDate = __DATE__;
 
 const { title, lang = null } = Astro.props;
 
@@ -31,8 +29,10 @@ const makeTitle = title ? title + " | " + "Astro starter" : "Astro starter templ
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<meta name="theme-color" content="#ffffff">
+		<meta name="theme-color" content="#ffffff" />
 		<HeadHrefLangs />
+
+		<ViewTransitions />
 
 		<!-- Global CSS -->
 		<link rel="stylesheet" href="/index.css" />
