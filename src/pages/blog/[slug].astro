@@ -6,7 +6,8 @@ import BlogItem from "@layouts/BlogItem.astro";
 changeLanguage("en");
 
 // Generate a new path for every collection post
-export async function getStaticPaths() {changeLanguage('en')
+export async function getStaticPaths() {
+	changeLanguage('en');
     const blogEntries = await getCollection("blog");
     var localizedBlogEntries = blogEntries.filter((entry) => entry.slug.startsWith(i18next.language));
     return localizedBlogEntries.map((post) => {

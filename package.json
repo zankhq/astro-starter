@@ -8,7 +8,7 @@
 		"build": "npm run pwa:generate-assets && npm run i18n:generate && astro build",
 		"preview": "astro preview",
 		"astro": "astro",
-		"script:change-language-in-dynamic-pages": "node ./src/scripts/change-language-in-dynamic-pages.js",
+		"script:change-language-in-dynamic-pages": "node ./src/scripts/changeLanguageInDynamicPages.js",
 		"i18n:generate": "astro-i18next generate && npm run script:change-language-in-dynamic-pages",
 		"pwa:generate-assets": "pwa-assets-generator --preset minimal public/logo.svg"
 	},

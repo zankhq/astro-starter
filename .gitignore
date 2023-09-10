@@ -21,49 +21,95 @@ pnpm-debug.log*
 .DS_Store
 
 # Language directories to ignore
-src/pages/af/  # Afrikaans
-src/pages/ar/  # Arabic
-src/pages/bn/  # Bengali
-src/pages/bg/  # Bulgarian
-src/pages/ca/  # Catalan
-src/pages/zh/  # Chinese (Simplified)
-src/pages/hr/  # Croatian
-src/pages/cs/  # Czech
-src/pages/da/  # Danish
-src/pages/nl/  # Dutch
-src/pages/en/  # English
-src/pages/fi/  # Finnish
-src/pages/fr/  # French
-src/pages/de/  # German
-src/pages/el/  # Greek
-src/pages/gu/  # Gujarati
-src/pages/he/  # Hebrew
-src/pages/hi/  # Hindi
-src/pages/hu/  # Hungarian
-src/pages/id/  # Indonesian
-src/pages/it/  # Italian
-src/pages/ja/  # Japanese
-src/pages/kn/  # Kannada
-src/pages/ko/  # Korean
-src/pages/lt/  # Lithuanian
-src/pages/lv/  # Latvian
-src/pages/ml/  # Malayalam
-src/pages/mr/  # Marathi
-src/pages/ms/  # Malay
-src/pages/no/  # Norwegian
-src/pages/pl/  # Polish
-src/pages/pt/  # Portuguese
-src/pages/pa/  # Punjabi
-src/pages/ro/  # Romanian
-src/pages/ru/  # Russian
-src/pages/sk/  # Slovak
-src/pages/sl/  # Slovenian
-src/pages/es/  # Spanish
-src/pages/sv/  # Swedish
-src/pages/ta/  # Tamil
-src/pages/te/  # Telugu
-src/pages/th/  # Thai
-src/pages/tr/  # Turkish
-src/pages/uk/  # Ukrainian
-src/pages/ur/  # Urdu
-src/pages/vi/  # Vietnamese
+# Afrikaans
+src/pages/af/
+# Arabic
+src/pages/ar/
+# Bengali
+src/pages/bn/
+# Bulgarian
+src/pages/bg/
+# Catalan
+src/pages/ca/
+# Chinese (Simplified)
+src/pages/zh/
+# Croatian
+src/pages/hr/
+# Czech
+src/pages/cs/
+# Danish
+src/pages/da/
+# Dutch
+src/pages/nl/
+# English
+src/pages/en/
+# Finnish
+src/pages/fi/
+# French
+src/pages/fr/
+# German
+src/pages/de/
+# Greek
+src/pages/el/
+# Gujarati
+src/pages/gu/
+# Hebrew
+src/pages/he/
+# Hindi
+src/pages/hi/
+# Hungarian
+src/pages/hu/
+# Indonesian
+src/pages/id/
+# Italian
+src/pages/it/
+# Japanese
+src/pages/ja/
+# Kannada
+src/pages/kn/
+# Korean
+src/pages/ko/
+# Lithuanian
+src/pages/lt/
+# Latvian
+src/pages/lv/
+# Malayalam
+src/pages/ml/
+# Marathi
+src/pages/mr/
+# Malay
+src/pages/ms/
+# Norwegian
+src/pages/no/
+# Polish
+src/pages/pl/
+# Portuguese
+src/pages/pt/
+# Punjabi
+src/pages/pa/
+# Romanian
+src/pages/ro/
+# Russian
+src/pages/ru/
+# Slovak
+src/pages/sk/
+# Slovenian
+src/pages/sl/
+# Spanish
+src/pages/es/
+# Swedish
+src/pages/sv/
+# Tamil
+src/pages/ta/
+# Telugu
+src/pages/te/
+# Thai
+src/pages/th/
+# Turkish
+src/pages/tr/
+# Ukrainian
+src/pages/uk/
+# Urdu
+src/pages/ur/
+# Vietnamese
+src/pages/vi/

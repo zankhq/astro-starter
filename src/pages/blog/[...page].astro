@@ -11,33 +11,31 @@ import Pagination from "@components/blog/Pagination.astro";
 changeLanguage("en");
 
 export async function getStaticPaths({ paginate }: any) {
-	changeLanguage("en");
-	const posts = (await getCollection("blog")).sort((a, b) => {
-		return a.data.pubDate.valueOf() - b.data.pubDate.valueOf();
-	});
-	// Preprocess the posts to split the slugs and get the languages
-	var processedPosts = posts.map((post) => {
-		const [...slug] = post.slug.split("/");
-		let lang = i18next.language;
-		var firstSlug = post.slug.match(/^([^\/]*)\//);
-		if (firstSlug) {
-			lang = firstSlug[1];
-		}
-		return {
-			...post,
-			slug: slug.join("/"),
-			lang: lang,
-		};
-	});
-	const localizedPosts = processedPosts.filter((post) => post.lang === i18next.language);
-	return paginate(localizedPosts, {
-		params: { blog: "blog" || undefined },
-		pageSize: 6,
-	});
+	changeLanguage('en');
+    const posts = (await getCollection("blog")).sort((a, b) => {
+        return a.data.pubDate.valueOf() - b.data.pubDate.valueOf();
+    });
+    // Preprocess the posts to split the slugs and get the languages
+    var processedPosts = posts.map((post) => {
+        const [...slug] = post.slug.split("/");
+        let lang = i18next.language;
+        var firstSlug = post.slug.match(/^([^\/]*)\//);
+        if (firstSlug) {
+            lang = firstSlug[1];
+        }
+        return {
+            ...post,
+            slug: slug.join("/"),
+            lang: lang,
+        };
+    });
+    const localizedPosts = processedPosts.filter((post) => post.lang === i18next.language);
+    return paginate(localizedPosts, {
+        params: { blog: "blog" || undefined },
+        pageSize: 6,
+    });
 }
-const {
-	page: { data: posts, url },
-} = Astro.props;
+const { page: { data: posts, url }, } = Astro.props;
 ---
 
 <Layout>

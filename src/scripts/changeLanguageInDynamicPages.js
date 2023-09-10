@@ -1,8 +1,8 @@
 import fsp from "fs/promises";
 import path from "path";
 
-const locales = ["it"];
 const defaultLocale = "en";
+const otherLocales = ["it"];
 const paths = ["blog/[...page]", "blog/[slug]"];
 
 async function main() {
@@ -15,7 +15,7 @@ async function main() {
 
 		const match = data.match(regex);
 
-		const changeLanguageString = `changeLanguage('${locale}')`;
+		const changeLanguageString = `\n\tchangeLanguage('${locale}');`;
 
 		if (match) {
 			const index = match.index + match[0].length;
@@ -25,7 +25,7 @@ async function main() {
 	}
 
 	for (const filePath of paths) {
-		for (const locale of locales) {
+		for (const locale of otherLocales) {
 			await fix(path.join(__dirname, `./src/pages/${locale}/${filePath}.astro`), locale);
 		}
 		await fix(path.join(__dirname, `./src/pages/${filePath}.astro`));
