@@ -1,0 +1,32 @@
+---
+import { getLocale } from "astro-i18n-aut";
+import { type CollectionEntry, getCollection, getEntry } from "astro:content";
+import BlogItem from "@layouts/BlogItem.astro";
+import { DEFAULT_LOCALE, LOCALES } from "@src/consts";
+
+const locale = getLocale(Astro.url);
+
+export async function getStaticPaths() {
+	const blogEntries = await getCollection("blog", (entry) => entry.slug.startsWith(DEFAULT_LOCALE + "/"));
+	return blogEntries.map((entry) => ({
+		params: { slug: entry.slug.replace(`${DEFAULT_LOCALE}/`, "") },
+	}));
+}
+
+const { slug } = Astro.params;
+
+const entry = await getEntry({
+	collection: "blog",
+	slug: locale + "/" + slug,
+});
+
+if (!entry) {
+	return new Response(null, { status: 404, statusText: "Not found" });
+}
+
+const { Content } = await entry.render();
+---
+
+<BlogItem {...entry.data}>
+	<Content />
+</BlogItem>
