@@ -1,20 +1,23 @@
 ---
+import { getLocale } from "astro-i18n-aut";
 import { ViewTransitions } from "astro:transitions";
 import BaseHead from "@components/BaseHead.astro";
 import Navbar from "@components/Navbar.astro";
 import Footer from "@components/Footer.astro";
 import { SITE_TITLE, SITE_DESCRIPTION } from "@src/consts";
 
-type LayoutProps = {
+const locale = getLocale(Astro.url);
+
+type Props = {
 	title: string;
-	description: string;
+	description?: string;
 	image?: string;
 };
 
-const { image, title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props as LayoutProps;
+const { image, title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props as Props;
 ---
 
-<html lang="en">
+<html lang={locale}>
 	<head>
 		<BaseHead title={title} description={description} image={image} />
 		<ViewTransitions />

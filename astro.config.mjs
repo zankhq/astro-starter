@@ -5,14 +5,14 @@ import tailwind from "@astrojs/tailwind";
 import alpinejs from "@astrojs/alpinejs";
 import NetlifyCMS from "astro-netlify-cms";
 import { i18n, filterSitemapByDefaultLocale } from "astro-i18n-aut/integration";
-import { DEFAULT_LOCALE, LOCALES } from "./src/consts";
+import { DEFAULT_LOCALE, LOCALES, SITE_URL } from "./src/consts";
 
 const defaultLocale = DEFAULT_LOCALE;
 const locales = LOCALES;
 
 // https://astro.build/config
 export default defineConfig({
-	site: "https://example.com",
+	site: SITE_URL,
 	trailingSlash: "always",
 	build: {
 		format: "directory",
