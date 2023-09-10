@@ -4,8 +4,8 @@
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "astro dev",
-		"start": "astro dev",
-		"build": "astro build",
+		"start": "npm run i18n:generate && astro dev",
+		"build": "npm run pwa:generate-assets && npm run i18n:generate && astro build",
 		"preview": "astro preview",
 		"astro": "astro",
 		"script:change-language-in-dynamic-pages": "node ./src/scripts/change-language-in-dynamic-pages.js",

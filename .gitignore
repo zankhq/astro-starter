@@ -19,3 +19,51 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+# Language directories to ignore
+src/pages/af/  # Afrikaans
+src/pages/ar/  # Arabic
+src/pages/bn/  # Bengali
+src/pages/bg/  # Bulgarian
+src/pages/ca/  # Catalan
+src/pages/zh/  # Chinese (Simplified)
+src/pages/hr/  # Croatian
+src/pages/cs/  # Czech
+src/pages/da/  # Danish
+src/pages/nl/  # Dutch
+src/pages/en/  # English
+src/pages/fi/  # Finnish
+src/pages/fr/  # French
+src/pages/de/  # German
+src/pages/el/  # Greek
+src/pages/gu/  # Gujarati
+src/pages/he/  # Hebrew
+src/pages/hi/  # Hindi
+src/pages/hu/  # Hungarian
+src/pages/id/  # Indonesian
+src/pages/it/  # Italian
+src/pages/ja/  # Japanese
+src/pages/kn/  # Kannada
+src/pages/ko/  # Korean
+src/pages/lt/  # Lithuanian
+src/pages/lv/  # Latvian
+src/pages/ml/  # Malayalam
+src/pages/mr/  # Marathi
+src/pages/ms/  # Malay
+src/pages/no/  # Norwegian
+src/pages/pl/  # Polish
+src/pages/pt/  # Portuguese
+src/pages/pa/  # Punjabi
+src/pages/ro/  # Romanian
+src/pages/ru/  # Russian
+src/pages/sk/  # Slovak
+src/pages/sl/  # Slovenian
+src/pages/es/  # Spanish
+src/pages/sv/  # Swedish
+src/pages/ta/  # Tamil
+src/pages/te/  # Telugu
+src/pages/th/  # Thai
+src/pages/tr/  # Turkish
+src/pages/uk/  # Ukrainian
+src/pages/ur/  # Urdu
+src/pages/vi/  # Vietnamese
