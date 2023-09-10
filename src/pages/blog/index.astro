@@ -1,0 +1,56 @@
+---
+import BaseHead from "@components/BaseHead.astro";
+import Layout from "@layouts/Layout.astro";
+import BlogHeader from "@components/blog/BlogHeader.astro";
+import Footer from "@components/Footer.astro";
+import { SITE_TITLE, SITE_DESCRIPTION, DEFAULT_LOCALE } from "../../consts";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import FormattedDate from "../../components/FormattedDate.astro";
+import { getLocale, getLocaleUrlPrefix } from "astro-i18n-aut";
+import Container from "@src/components/Container.astro";
+import HeroImage from "@src/components/blog/HeroImage.astro";
+
+const locale = getLocale(Astro.url) ?? DEFAULT_LOCALE;
+const localeUrlPrefix = getLocaleUrlPrefix(Astro.url);
+
+const posts = (await getCollection("blog", (entry) => entry.slug.startsWith(`${locale}/`)))
+	.sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf())
+	.map<CollectionEntry<"blog"> & { href: string }>((post) => {
+		return {
+			href: localeUrlPrefix + "/blog" + post.slug.replace(locale, "") + "/",
+			...post,
+		};
+	});
+---
+
+<Layout title="Blog">
+	<section>
+		<Container class="pt-16">
+			<ul class="grid grid-cols-2 gap-6 list-none p-0 m-0">
+				{
+					posts.map((post: any, index: number) => (
+						<li class={`${index === 0 ? "w-full text-center mb-4 col-span-2" : ""}`}>
+							<a href={post.href} class="block transition-colors duration-200">
+								<HeroImage
+									class={`${index === 0 ? "w-full" : ""} mb-2 rounded-lg hover:shadow-md`}
+									src={post.data.heroImage}
+									alt={post.data.title}
+									width={720}
+									height={360}
+								/>
+								<BlogHeader
+									pubDate={post.data.pubDate}
+									name={`title-${post.data.title}`}
+									isSubheading={true}
+									class={`${index === 0 ? "text-6xl" : ""} text-black m-0`}>
+									{post.data.title}
+								</BlogHeader>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</Container>
+	</section>
+</Layout>

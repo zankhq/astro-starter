@@ -9,7 +9,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from "@src/consts";
 const locale = getLocale(Astro.url);
 
 type Props = {
-	title: string;
+	title?: string;
 	description?: string;
 	image?: string;
 };

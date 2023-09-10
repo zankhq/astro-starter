@@ -1,0 +1,25 @@
+---
+import { SITE_TITLE, LOCALES, DEFAULT_LOCALE } from "@src/consts";
+import { getLocale, getUrlWithoutLocale } from "astro-i18n-aut";
+
+const currentLocale = getLocale(Astro.url) ?? DEFAULT_LOCALE;
+const locales = Object.values(LOCALES);
+
+const urlWithoutLocalePrefix = getUrlWithoutLocale(Astro.url);
+---
+
+<select
+	class="cursor-pointer dark:bg-stone-950 dark:text-white focus-visible:outline-none"
+	x-data={`{
+		currentLocale: 'en',  // Replace 'en' with the method or variable that provides the current locale
+		changePage: function(event) { location.href = event.target.value; }
+	}`}
+	x-on:change="changePage($event)">
+	{
+		locales.map((locale) => (
+			<option value={`/${locale}${urlWithoutLocalePrefix}`} selected={locale === currentLocale}>
+				{locale}
+			</option>
+		))
+	}
+</select>

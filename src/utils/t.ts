@@ -45,7 +45,7 @@ export default function t(astroUrl: URL): Locales {
 export function localizePath(link: string | URL, astroUrl: string | URL): string {
 	let locale = getLocale(astroUrl);
 	let localizedLink: string = "";
-	if (locale) {
+	if (locale && locale !== defaultLocale) {
 		let localeLink = `/${getLocale(astroUrl) ?? ""}/${link}`.replaceAll("//", "/") ?? "";
 		localizedLink = localeLink;
 	} else {

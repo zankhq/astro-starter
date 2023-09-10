@@ -1,5 +1,12 @@
-import { localizePath } from "@utils/t";
-
-export const getBlogPath = (url: URL | string, slug?: string) => {
-	return localizePath(`/blog/${slug}/`, url);
+/**
+ * @description Get the reading time of an article
+ * @param {*} body
+ * @returns {number} readTime
+ */
+export const getArticleReadingTime = (body: string): number => {
+	const wordsPerMinute = 183;
+	const numberOfWords = body.split(/\s/g).length;
+	const minutes = numberOfWords / wordsPerMinute;
+	const readTime = Math.ceil(minutes);
+	return readTime;
 };

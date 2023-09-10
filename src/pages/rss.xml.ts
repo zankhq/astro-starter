@@ -1,37 +1,25 @@
-import { getLocale } from "astro-i18n-aut";
-import { getBlogPath } from "@src/utils/blog.ts";
+import type { APIRoute } from "astro";
 import rss from "@astrojs/rss";
 import { getCollection } from "astro:content";
-import { SITE_TITLE, SITE_DESCRIPTION, SITE_URL, DEFAULT_LOCALE } from "@src/consts";
+import { SITE_TITLE, SITE_DESCRIPTION, DEFAULT_LOCALE } from "../consts";
 
-const locale = getLocale(DEFAULT_LOCALE);
+// defaultLang RSS feed
 
-export async function GET(context: { site: any }) {
-	const posts = await getCollection("blog");
+export const get: APIRoute = async function get({ site }) {
+	const posts = await getCollection("blog", (entry) => entry.slug.startsWith(DEFAULT_LOCALE));
 
-	var processedPosts = posts.map((post) => {
-		const [...slug] = post.slug.split("/");
-		let lang = locale;
-		var firstSlug = post.slug.match(/^([^\/]*)\//);
-		if (firstSlug) {
-			lang = firstSlug[1];
-		}
-		return {
-			...post,
-			slug: slug.join("/"),
-			lang: lang,
-		};
-	});
-
-	const localizedPosts = processedPosts.filter((post) => post.lang === locale);
-
-	return rss({
+	const { body } = await rss({
 		title: SITE_TITLE,
 		description: SITE_DESCRIPTION,
-		site: context.site,
-		items: localizedPosts.map((post) => ({
+		site: site!.href,
+		items: posts.map((post) => ({
 			...post.data,
-			link: getBlogPath(SITE_URL, post.slug),
+			link: `/blog/${post.slug.replace(`${DEFAULT_LOCALE}/`, "")}/`,
 		})),
 	});
-}
+
+	return new Response(body, {
+		status: 200,
+		statusText: "OK",
+	});
+};
