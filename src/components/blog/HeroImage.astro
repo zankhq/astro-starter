@@ -1,0 +1,11 @@
+---
+type Props = {
+	src: string;
+	alt: string;
+	[key: string]: any;
+};
+
+const { src, alt, ...props } = Astro.props;
+---
+
+<img transition:name={alt} transition:animate="initial" {...props} src={src} alt={alt} />

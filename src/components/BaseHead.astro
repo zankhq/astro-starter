@@ -1,0 +1,83 @@
+---
+// Import the global.css file here so that it is included on
+// all pages through the use of the <BaseHead /> component.
+import i18next from "i18next";
+import "@styles/global.css";
+import { SEO } from "astro-seo";
+import { SITE_TITLE, SITE_DESCRIPTION, TWITTER_CREATOR } from "@src/consts";
+
+interface Props {
+	title: string;
+	description: string;
+	image?: string;
+}
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const resolvedImageWithDomain = new URL("/meta/opengraph.png", Astro.site).toString();
+
+const { title = SITE_TITLE, description = SITE_DESCRIPTION, image = "/blog-placeholder-1.jpg" } = Astro.props;
+---
+
+<!-- Global Metadata -->
+<meta charset="utf-8" />
+
+<!-- Primary Meta Tags -->
+<title>{title}</title>
+
+<SEO
+	title={title}
+	description={description}
+	canonical={canonicalURL}
+	openGraph={{
+		basic: {
+			url: canonicalURL,
+			title: title,
+			type: "website",
+			image: resolvedImageWithDomain,
+		},
+		optional: {
+			description: description,
+			siteName: title,
+			locale: i18next.language,
+		},
+		image: {
+			alt: title,
+		},
+	}}
+	twitter={{
+		card: "summary_large_image",
+		site: canonicalURL.toString(),
+		title: title,
+		description: description,
+		image: resolvedImageWithDomain,
+		imageAlt: title,
+		creator: TWITTER_CREATOR,
+	}}
+	extend={{
+		// extending the default link tags
+		link: [
+			{
+				rel: "icon",
+				type: "image/svg+xml",
+				href: "/favicon.svg",
+			},
+		],
+		// extending the default meta tags
+		meta: [
+			{
+				name: "generator",
+				content: Astro.generator,
+			},
+			{
+				name: "viewport",
+				content: "width=device-width,initial-scale=1",
+			},
+			{
+				name: "twitter:image",
+				content: "https://user-images.githubusercontent.com/5182256/131216951-8f74f425-f775-463d-a11b-0e01ad9fce8d.png",
+			},
+			{ name: "twitter:title", content: "Tinker Tailor Soldier Spy" },
+			{ name: "twitter:description", content: "Agent" },
+		],
+	}}
+/>

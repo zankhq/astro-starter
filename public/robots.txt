@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: http://astrostarter.zank.studio/sitemap-index.xml

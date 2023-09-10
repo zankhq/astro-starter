@@ -1,0 +1,42 @@
+---
+import FormattedDate from "@components/FormattedDate.astro";
+
+type Props = {
+	isSubheading?: boolean;
+	pubDate: Date;
+	updatedDate?: Date;
+	name?: string;
+	[key: string]: any;
+};
+
+const { isSubheading = false, pubDate, updatedDate, name, ...props } = Astro.props;
+---
+
+<div transition:name={name} transition:animate="initial">
+	{
+		isSubheading ? (
+			<>
+				<h4 {...props}>
+					<slot />
+				</h4>
+				<p class="text-gray-600 m-0">
+					<FormattedDate date={pubDate} />
+				</p>
+			</>
+		) : (
+			<>
+				<div class="text-gray-600 mb-2">
+					<FormattedDate date={pubDate} />
+					{updatedDate && (
+						<div class="italic">
+							Last updated on <FormattedDate date={updatedDate} />
+						</div>
+					)}
+				</div>
+				<h1 {...props}>
+					<slot />
+				</h1>
+			</>
+		)
+	}
+</div>
