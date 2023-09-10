@@ -1,17 +1,18 @@
 ---
-import { changeLanguage } from "i18next";
+// import translations
+import translations from "@utils/t.ts";
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/Container.astro";
 
-changeLanguage("en");
+const t = translations(Astro.url);
 ---
 
 <Layout>
 	<Container class="pt-16">
 		<h1>🧑‍🚀 Hello, Astronaut!</h1>
 		<p>
-			Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template serves as a lightweight, minimally-styled
-			starting point for anyone looking to build a personal website, blog, or portfolio with Astro.
+			Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template serves as a lightweight,
+			minimally-styled starting point for anyone looking to build a personal website, blog, or portfolio with Astro.
 		</p>
 		<p>
 			This template comes with a few integrations already configured in your
@@ -32,7 +33,9 @@ changeLanguage("en");
 			</a> to ask questions.
 		</p>
 		<p>
-			Looking for a blog template with a bit more personality? Check out <a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
+			Looking for a blog template with a bit more personality? Check out <a href="https://github.com/Charca/astro-blog-template">
+				astro-blog-template
+			</a>
 			 by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
 		</p>
 	</Container>
