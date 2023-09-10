@@ -1,0 +1,35 @@
+---
+
+---
+
+<select
+	x-data={`{
+				theme: localStorage.theme || 'system',
+				updateDocumentClassTheme: function() {
+					if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+						document.documentElement.classList.add('dark');
+					} else {
+						document.documentElement.classList.remove('dark');
+					}
+				},
+				switchTheme: function (newValue) {
+					if (newValue == 'dark') {
+						localStorage.theme = 'dark';
+					} else if (newValue == 'light') {
+						localStorage.theme = 'light';
+					} else {
+						localStorage.removeItem('theme');
+					}
+					this.updateDocumentClassTheme();
+				},
+			}`}
+	name="theme-selector"
+	id="theme-selector"
+	class="appearance-none cursor-pointer rounded-md pl-3 pr-2 py-1.5 dark:bg-stone-950 dark:text-white focus-visible:outline-none"
+	x-init="updateDocumentClassTheme()"
+	x-model="theme"
+	@change="switchTheme($event.target.value)">
+	<option value="system">System</option>
+	<option value="dark">Dark</option>
+	<option value="light">Light</option>
+</select>

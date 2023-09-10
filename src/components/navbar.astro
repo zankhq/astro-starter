@@ -2,22 +2,8 @@
 import HeaderLink from "@components/Link.astro";
 import { localizePath } from "astro-i18next";
 import { LanguageSelector } from "astro-i18next/components";
-import { SITE_TITLE } from "@src/consts";
-
-let pages = [
-	{
-		title: "Home",
-		href: "/",
-	},
-	{
-		title: "Blog",
-		href: "/blog",
-	},
-	{
-		title: "About",
-		href: "/about",
-	},
-];
+import ThemeSelector from "@components/ThemeSelector.astro";
+import { SITE_TITLE, PAGES } from "@src/consts";
 ---
 
 <header transition:persist class="bg-white shadow-md px-4 py-2">
@@ -28,9 +14,10 @@ let pages = [
 			</a>
 		</h2>
 		<div class="flex space-x-4">
-			{pages.map(({ title, href }) => <HeaderLink href={localizePath(href)}>{title}</HeaderLink>)}
+			{PAGES.map(({ title, href }) => <HeaderLink href={localizePath(href)}>{title}</HeaderLink>)}
 		</div>
 		<div class="flex space-x-4">
+			<ThemeSelector />
 			<LanguageSelector
 				showFlag={false}
 				class="appearance-none cursor-pointer pl-3 pr-2 py-1.5 rounded-md dark:bg-stone-950 dark:text-white focus-visible:outline-none"
