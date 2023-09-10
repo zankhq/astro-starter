@@ -9,8 +9,9 @@
 			"@components/*": ["components/*"],
 			"@layouts/*": ["layouts/*"],
 			"@styles/*": ["styles/*"],
-			"@scripts/*": ["scripts/*"],
-			"@pages/*": ["pages/*"]
+			"@utils/*": ["utils/*"],
+			"@pages/*": ["pages/*"],
+			"@locales/*": ["locales/*"]
 		}
 	}
 }
