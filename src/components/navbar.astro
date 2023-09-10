@@ -1,20 +1,22 @@
 ---
 import HeaderLink from "@components/Link.astro";
-import { localizePath } from "astro-i18next";
-import { LanguageSelector } from "astro-i18next/components";
+import { localizePath } from "@utils/t.ts";
+import LanguageSelector from "@components/LanguageSelector.astro";
 import ThemeSelector from "@components/ThemeSelector.astro";
 import { SITE_TITLE, PAGES } from "@src/consts";
+
+const url = Astro.url;
 ---
 
 <header transition:persist class="bg-white shadow-md px-4 py-2">
 	<nav class="flex items-center justify-between">
 		<h2 class="text-lg font-semibold m-0">
-			<a href={localizePath("/")} class="text-black hover:text-black no-underline">
+			<a href={localizePath("/", url)} class="text-black hover:text-black no-underline">
 				{SITE_TITLE}
 			</a>
 		</h2>
 		<div class="flex space-x-4">
-			{PAGES.map(({ title, href }) => <HeaderLink href={localizePath(href)}>{title}</HeaderLink>)}
+			{PAGES.map(({ title, href }) => <HeaderLink href={localizePath(href, url)}>{title}</HeaderLink>)}
 		</div>
 		<div class="flex space-x-4">
 			<ThemeSelector />
