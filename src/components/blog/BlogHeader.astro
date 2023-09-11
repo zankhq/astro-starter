@@ -19,13 +19,13 @@ const { isSubheading = false, pubDate, updatedDate, name, ...props } = Astro.pro
 				<h4 {...props}>
 					<slot />
 				</h4>
-				<p class="text-gray-600 m-0">
+				<p class="m-0">
 					<FormattedDate date={pubDate} />
 				</p>
 			</>
 		) : (
 			<>
-				<div class="text-gray-600 mb-2">
+				<div class="mb-2">
 					<FormattedDate date={pubDate} />
 					{updatedDate && (
 						<div class="italic">

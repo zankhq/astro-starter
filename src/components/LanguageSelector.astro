@@ -9,7 +9,7 @@ const urlWithoutLocalePrefix = getUrlWithoutLocale(Astro.url);
 ---
 
 <select
-	class="cursor-pointer dark:bg-stone-950 dark:text-white focus-visible:outline-none"
+	class="cursor-pointer dark:bg-stone-800 dark:text-stone-50 focus-visible:outline-none"
 	x-data={`{
 		currentLocale: 'en',  // Replace 'en' with the method or variable that provides the current locale
 		changePage: function(event) { location.href = event.target.value; }

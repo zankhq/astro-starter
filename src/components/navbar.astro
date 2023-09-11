@@ -8,10 +8,10 @@ import { SITE_TITLE, PAGES } from "@src/consts";
 const url = Astro.url;
 ---
 
-<header class="bg-white shadow-md px-4 py-2">
+<header class="shadow-md px-4 py-2">
 	<nav class="flex items-center justify-between">
 		<h2 class="text-lg font-semibold m-0">
-			<a href={localizePath("/", url)} class="text-black hover:text-black no-underline">
+			<a href={localizePath("/", url)} class="no-underline">
 				{SITE_TITLE}
 			</a>
 		</h2>

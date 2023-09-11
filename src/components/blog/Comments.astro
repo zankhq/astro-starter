@@ -1,0 +1,36 @@
+---
+/* Generate Giscus from
+ * https://giscus.app/
+ * yppu only need to change the following fields:
+ * dataset.repo="XXX"
+ * dataset.repoId="XXX"
+ * dataset.category="XXX"
+ * dataset.categoryId="XXX"
+ **/
+---
+
+<div
+	class="mx-auto prose prose-lg dark:prose-invert mt-20"
+	x-data={`{
+				initGiscus: function() {
+					let script = document.createElement('script');
+					script.src = 'https://giscus.app/client.js';
+					script.dataset.repo = 'zankhq/astro-starter';
+					script.dataset.repoId = 'R_kgDOKA7XPw';
+					script.dataset.category = 'Blog';
+					script.dataset.categoryId = 'DIC_kwDOKA7XP84CZN2h';
+					script.dataset.mapping = 'og:title';
+					script.dataset.strict = '0';
+					script.dataset.reactionsEnabled = '1';
+					script.dataset.emitMetadata = '0';
+					script.dataset.inputPosition = 'top';
+					script.dataset.theme = localStorage.theme == 'dark' ? 'dark' : localStorage.theme == 'light' ? 'light' : 'preferred_color_scheme';
+					script.dataset.lang = 'en';
+					script.dataset.loading = 'lazy';
+					script.crossOrigin = 'anonymous';
+					script.async = true;
+					this.$el.appendChild(script);
+				}
+			}`}
+	x-init="initGiscus()">
+</div>
