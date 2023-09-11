@@ -6,8 +6,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/zankhq/astro-starter.git",
-		"directory": "packages/create-astro"
+		"url": "https://github.com/zankhq/astro-starter.git"
 	},
 	"bugs": "https://github.com/zankhq/astro-starter/issues",
 	"homepage": "https://github.com/zankhq/astro-starter",

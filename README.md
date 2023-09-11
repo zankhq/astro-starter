@@ -1,12 +1,12 @@
 # Astro Starter Kit
 
 ```
-npm create astro@latest -- --template blog
+npm create astro-starter@latest
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/blog)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/blog)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/blog/devcontainer.json)
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/zankhq/astro-starter)
+[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/zankhq/astro-starter)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/zankhq/astro-starter?devcontainer_path=.devcontainer/blog/devcontainer.json)
 
 > 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
 
@@ -14,12 +14,13 @@ npm create astro@latest -- --template blog
 
 Features:
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+- ✅ Tailwind CSS
+- ✅ Alpine js
+- ✅ Dark/light mode
+- ✅ Blog
+- ✅ Discussions (thanks to giscus)
+- ✅ CMS for editing blog post (thanks to decap CMS)
+- ❌ PWA
 
 ## 🚀 Project Structure
 
@@ -31,10 +32,17 @@ Inside of your Astro project, you'll see the following folders and files:
 │   ├── components/
 │   ├── content/
 │   ├── layouts/
-│   └── pages/
+│   ├── locales/
+│   ├── middleware/
+│   ├── pages/
+│   ├── styles/
+│   ├── utils/
+│   └── consts.ts/
 ├── astro.config.mjs
 ├── README.md
 ├── package.json
+├── .prettierrc
+├── tailwind.config.cjs
 └── tsconfig.json
 ```
 

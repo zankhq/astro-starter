@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const readline = require("readline");
-const { execSync } = require("child_process");
-const fs = require("fs");
+import readline from "readline";
+import  { execSync } from "child_process";
+import fs from  "fs";
 
 const rl = readline.createInterface({
 	input: process.stdin,
