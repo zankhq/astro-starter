@@ -1,22 +1,49 @@
 #!/usr/bin/env node
 
-import readline from "readline";
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-
-const rl = readline.createInterface({
-	input: process.stdin,
-	output: process.stdout,
-});
+import inquirer from "inquirer";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const rootDir = path.join(__dirname, "..");
 
-const exclusions = ["node_modules", "bin"]; // Add any additional directories you want to exclude here
+const exclusions = ["node_modules", "bin", ".git", ".astro"]; // Add any additional directories you want to exclude here
+
+function uninstallInquirer() {
+	console.log("Uninstalling inquirer...");
+	execSync("pnpm remove inquirer", {
+		stdio: "inherit",
+	});
+}
+
+function deleteDirectoryRecursive(directoryPath) {
+	if (fs.existsSync(directoryPath)) {
+		fs.readdirSync(directoryPath).forEach((file, index) => {
+			const curPath = path.join(directoryPath, file);
+			if (fs.lstatSync(curPath).isDirectory()) {
+				// Recursive delete if it's a directory
+				deleteDirectoryRecursive(curPath);
+			} else {
+				// Delete the file
+				fs.unlinkSync(curPath);
+			}
+		});
+		fs.rmdirSync(directoryPath); // Remove the directory itself
+	}
+}
+
+function isCommandAvailable(command) {
+	try {
+		execSync(command, { stdio: "ignore" });
+		return true;
+	} catch (error) {
+		return false;
+	}
+}
 
 function copyRecursive(src, dest) {
 	const exists = fs.existsSync(src);
@@ -49,60 +76,208 @@ function getGitAuthorName() {
 	}
 }
 
-rl.question("How would you like to name your package? ", (packageName) => {
-	rl.question('Where would you like to create the new project? (Provide a directory path, use "." for current directory)', (destination) => {
-		rl.question("Do you want to install the packages now? (y/n) ", (answer) => {
-			try {
-				if (!fs.existsSync(destination)) {
-					fs.mkdirSync(destination, { recursive: true });
-				}
+function ensureNetlifyCLI() {
+	// We assume that if `pnpm list -g netlify-cli` command doesn't throw an error, then netlify-cli is installed.
+	if (!isCommandAvailable("pnpm list -g netlify-cli")) {
+		console.log("netlify-cli is not installed. Installing using pnpm...");
+		execSync("pnpm add -g netlify-cli", { stdio: "inherit" });
+		console.log("netlify-cli installed successfully.");
+	} else {
+		console.log("netlify-cli is already installed.");
+	}
+}
 
-				// Copy all files and subdirectories from the root directory to the destination, excluding the specified ones
-				copyRecursive(rootDir, destination);
+function ensureGHCLI() {
+	if (!isCommandAvailable("gh --version")) {
+		console.warn("GitHub CLI (gh) is not installed but is required for certain operations.");
+		console.warn("Please visit 'https://github.com/cli/cli#installation' to install the GitHub CLI.");
+		process.exit(1); // Terminate the program.
+	} else {
+		console.log("GitHub CLI (gh) is already installed.");
+	}
+}
 
-				// Update package.json with the new name and author
-				const packageJsonPath = path.join(destination, "package.json");
-				const packageData = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
-				if (packageName) {
-					packageData.name = packageName;
-				}
-				packageData.varsion = "0.0.1";
-				packageData.author = getGitAuthorName(); // Set the author from git config
-				delete packageData.bin; // Remove the bin property from package.json
-				delete packageData.files;
-				delete packageData.main;
-				delete packageData.repository;
-				delete packageData.homepage;
-				delete packageData.bugs;
-				fs.writeFileSync(packageJsonPath, JSON.stringify(packageData, null, 2));
+function isGitRepo() {
+	try {
+		execSync("git status", { stdio: "ignore" });
+		return true;
+	} catch (error) {
+		return false;
+	}
+}
 
-				console.log(`Project initialized in ${destination}`);
+function createGitHubRepo(repoName) {
+	try {
+		execSync(`gh repo create ${repoName} --confirm`, { stdio: "inherit" });
+	} catch (error) {
+		console.error("Failed to create the repo:", error.message);
+	}
+}
 
-				// Check user's answer and run pnpm install if confirmed
-				if (answer.toLowerCase() === "y" || answer.toLowerCase() === "yes") {
-					execSync(`cd ${destination} && pnpm install`, { stdio: "inherit" });
-					console.log(`Packages installed successfully in ${destination}`);
+function isRepoConnectedToGitHub() {
+	try {
+		const remoteURL = execSync("git config --get remote.origin.url", { encoding: "utf8" }).trim();
+		return remoteURL.includes("github.com");
+	} catch (error) {
+		return false;
+	}
+}
 
-					rl.question("Do you want to run the project now? (y/n) ", (answer) => {
-						try {
-							if (answer.toLowerCase() === "y" || answer.toLowerCase() === "yes") {
-								execSync(`cd ${destination} && pnpm dev`, { stdio: "inherit" });
-							} else {
-								console.log(`You can run 'pnpm dev' in ${destination} whenever you're ready.`);
-							}
-						} catch (error) {
-							console.error("Failed to run the project:", error.message);
-						}
-						rl.close();
-					});
-				} else {
-					console.log(`You can run 'pnpm install' in ${destination} whenever you're ready.`);
-					rl.close();
-				}
-			} catch (error) {
-				console.error("Failed to create the project:", error.message);
-				rl.close();
+function pushToGitHub() {
+	try {
+		execSync("git push -u origin main", { stdio: "inherit" }); // assuming you're pushing the main branch
+	} catch (error) {
+		console.error("Failed to push to GitHub:", error.message);
+	}
+}
+
+function ensureConnectedToGitHub(destination) {
+	// Check if the directory is a Git repo
+	if (!isGitRepo()) {
+		console.error("This directory is not a Git repository. Initializing it as one.");
+		execSync("git init", { stdio: "inherit" });
+	}
+
+	// Check if the repo is connected to GitHub
+	if (!isRepoConnectedToGitHub()) {
+		console.log("This repository is not connected to GitHub.");
+		ensureGHCLI(); // Ensure that GitHub CLI is installed
+		createGitHubRepo(path.basename(destination)); // Create a new GitHub repo with the name of the destination directory
+		execSync("git add .", { stdio: "inherit" }); // Stage all files
+		execSync('git commit -m "Initial commit"', { stdio: "inherit" }); // Commit changes
+		pushToGitHub(); // Push changes to the new GitHub repo
+	}
+}
+
+function deployToNetlify(destination) {
+	console.log("Deploying to Netlify...");
+
+	// Change directory to destination
+	process.chdir(destination);
+
+	// Remove the functions folder
+	const functionsDir = path.join(destination, "functions");
+	deleteDirectoryRecursive(functionsDir);
+	console.log(`Removed 'functions' directory from ${destination} as is only needed for cloudflare pages.`);
+
+	// Ensure that netlify-cli is installed
+	ensureNetlifyCLI();
+
+	// Ensure the directory is connected to GitHub
+	ensureConnectedToGitHub(destination);
+
+	// Run the netlify init command to set up continuous deployment
+	try {
+		execSync("netlify init", { stdio: "inherit" });
+		console.log("Deployment to Netlify completed successfully.");
+	} catch (error) {
+		console.error("Failed to deploy to Netlify:", error.message);
+	}
+}
+
+function deployToCloudflare(destination) {
+	// Placeholder for Cloudflare Pages deployment logic.
+	console.warn("Cloudflare Pages deployment not implemented yet.");
+
+	// Ensure that the directory is connected to a GitHub repo
+	// ensureConnectedToGitHub(destination);
+}
+
+async function main() {
+	try {
+		const { packageName, destination, publishProject, publishProjectLocation } = await inquirer.prompt([
+			{
+				type: "input",
+				name: "packageName",
+				message: "How would you like to name your package?",
+			},
+			{
+				type: "input",
+				name: "destination",
+				message: 'Where would you like to create the new project? (Provide a directory path, use "." for current directory)',
+				default: ".",
+			},
+			{
+				type: "confirm",
+				name: "publishProject",
+				message: "Do you want to publish your project to netlify or cloudflare pages now?",
+			},
+			{
+				type: "list",
+				name: "publishProjectLocation",
+				message: "Where do you want to publish your project?",
+				choices: ["Netlify", "Cloudflare Pages"],
+				filter: function (val) {
+					return val.toLowerCase();
+				},
+				when: (answers) => answers.publishProject,
+			},
+		]);
+
+		// The rest of your logic to handle these answers goes here...
+
+		if (!fs.existsSync(destination)) {
+			fs.mkdirSync(destination, { recursive: true });
+		}
+
+		// Copy all files and subdirectories from the root directory to the destination
+		copyRecursive(rootDir, destination);
+
+		// Update package.json with the new name and author
+		const packageJsonPath = path.join(destination, "package.json");
+		const packageData = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
+		if (packageName) {
+			packageData.name = packageName;
+		}
+		packageData.version = "0.0.1";
+		packageData.author = getGitAuthorName();
+		delete packageData.bin; // Remove the bin property from package.json
+		delete packageData.files;
+		delete packageData.main;
+		delete packageData.repository;
+		delete packageData.homepage;
+		delete packageData.bugs;
+		fs.writeFileSync(packageJsonPath, JSON.stringify(packageData, null, 2));
+
+		console.log(`Project initialized in ${destination}`);
+
+		if (publishProject) {
+			switch (publishProjectLocation) {
+				case "netlify":
+					deployToNetlify(destination);
+					break;
+				case "cloudflare pages":
+					deployToCloudflare(destination);
+					break;
+				default:
+					console.error("Unknown deployment option:", publishProjectLocation);
 			}
-		});
-	});
-});
+		}
+
+		// Ask the user if they want to run the project, but only after the publishing step.
+		const { runProject: shouldRunProject } = await inquirer.prompt([
+			{
+				type: "confirm",
+				name: "runProject",
+				message: "Do you want to run the project locally?",
+				default: true,
+			},
+		]);
+
+		// Ask user ro run the project or not
+		if (shouldRunProject) {
+			execSync(`cd ${destination} && pnpm install`, { stdio: "inherit" });
+			console.log(`Packages installed successfully in ${destination}`);
+			execSync(`cd ${destination} && pnpm dev`, { stdio: "inherit" });
+		} else if (publishProject) {
+			console.log(`You can run 'pnpm dev' in ${destination} whenever you're ready.`);
+		}
+
+		// Once everything is done, uninstall inquirer
+		uninstallInquirer();
+	} catch (error) {
+		console.error("Failed to create the project:", error.message);
+	}
+}
+
+main();
