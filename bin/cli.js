@@ -493,6 +493,16 @@ async function deployToNetlify(destination) {
 			console.error("Failed to deploy to Netlify:", error.message);
 		}
 	}
+
+	// Update HOSTING_SERVICE value in the src/const.ts file
+	const constsFilePath = path.join(destination, "src", "const.ts");
+	const content = fs.readFileSync(constsFilePath, "utf8");
+	const updatedContent = content.replace(
+		/export const HOSTING_SERVICE: "cloudflare" \| "netlify" \| "none" = "[^"]+";/,
+		`export const HOSTING_SERVICE: "cloudflare" | "netlify" | "none" = "netlify";`,
+	);
+	fs.writeFileSync(constsFilePath, updatedContent, "utf8");
+	console.log("Updated HOSTING_SERVICE value to 'netlify' in src/const.ts");
 }
 
 /**
@@ -591,7 +601,7 @@ function displayWelcomeMessage(publishProject, publishProjectLocation) {
 				log(`2. [Open Netlify site]: netlify open`);
 				break;
 			case "cloudflare pages":
-				log(`2. [Open Cloudflare Pages site]: `);
+				log(`2. [Connect cloudflare pages to your repo]: https://developers.cloudflare.com/pages/framework-guides/deploy-an-astro-site/`);
 				break;
 			default:
 				log(`2. [Deployment] For netlify or cloudflare pages deployment check:`);
