@@ -16,7 +16,7 @@
  * @exports None
  */
 
-import fs from "fs";
+import { promises as fs } from "fs";
 import path from "path";
 import { execSync } from "child_process";
 import { fileURLToPath } from "url";
@@ -123,13 +123,24 @@ function error(message) {
 }
 
 /**
- * Uninstalls the inquirer package using the selected package manager.
+ * Checks if a file or directory exists at the given path.
+ * @param {string} path - The path to check for existence.
+ * @returns {Promise<boolean>} - A Promise that resolves to true if the file or directory exists, false otherwise.
  */
+async function exists(path) {
+	try {
+		await fs.access(path);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
 /**
  * Uninstalls the "inquirer" package from the specified destination directory, if it is installed.
  * @param {string} destination - The path to the directory where the package should be uninstalled from.
  */
-function uninstallInquirer(destination) {
+function uninstallInquirerIfNeeded(destination) {
 	if (isPackageInstalled("inquirer", destination)) {
 		console.log("Uninstalling inquirer...");
 		execSync(`${packageManagerCommands[selectedPackageManager].remove} inquirer`, {
@@ -144,19 +155,19 @@ function uninstallInquirer(destination) {
  *
  * @param {string} directoryPath - The path of the directory to delete.
  */
-function deleteDirectoryRecursive(directoryPath) {
-	if (fs.existsSync(directoryPath)) {
-		fs.readdirSync(directoryPath).forEach((file, index) => {
+async function deleteDirectoryRecursive(directoryPath) {
+	if (await exists(directoryPath)) {
+		(await fs.readdir(directoryPath)).forEach(async (file, index) => {
 			const curPath = path.join(directoryPath, file);
-			if (fs.lstatSync(curPath).isDirectory()) {
+			if (await fs.lstat(curPath).isDirectory()) {
 				// Recursive delete if it's a directory
-				deleteDirectoryRecursive(curPath);
+				await deleteDirectoryRecursive(curPath);
 			} else {
 				// Delete the file
-				fs.unlinkSync(curPath);
+				await fs.unlink(curPath);
 			}
 		});
-		fs.rmdirSync(directoryPath); // Remove the directory itself
+		await fs.rmdir(directoryPath); // Remove the directory itself
 	}
 }
 
@@ -168,7 +179,19 @@ function deleteDirectoryRecursive(directoryPath) {
  */
 function isCommandAvailable(command) {
 	try {
-		execSync(command, { stdio: "ignore" });
+		const output = execSync(command, { stdio: "pipe", encoding: "utf-8" });
+
+		// Special handling for package checking commands
+		if (command.includes("npm list -g") || command.includes("pnpm list -g") || command.includes("yarn global list")) {
+			// Extract package name from command
+			const packageName = command.split("-g")[1].trim();
+
+			// If the output doesn't include the package name, it's not installed
+			if (!output.includes(packageName)) {
+				return false;
+			}
+		}
+
 		return true;
 	} catch (error) {
 		return false;
@@ -220,7 +243,7 @@ async function copyRecursive(src, dest) {
 			await fs.copyFile(src, dest);
 		}
 	} catch (err) {
-		error(`Error copying from ${src} to ${dest}: ${err.message}`);
+		console.error(`Error copying from ${src} to ${dest}: ${err.message}`);
 	}
 }
 
@@ -254,11 +277,27 @@ function ensureNetlifyCLI() {
 }
 
 /**
+ * Ensures that the wrangler CLI is installed globally.
+ * If it's not installed, it will be installed using the selected package manager.
+ * @returns {void}
+ */
+function ensureWranglerCLI() {
+	// We assume that if `pnpm list -g wrangler` command doesn't throw an error, then wrangler is installed.
+	if (!isCommandAvailable(`${packageManagerCommands[selectedPackageManager].list} -g wrangler`)) {
+		console.log(`wrangler is not installed. Installing using ${selectedPackageManager}...`);
+		execSync(`${packageManagerCommands[selectedPackageManager].globalAdd} wrangler`, { stdio: "inherit" });
+		console.log("wrangler installed successfully.");
+	} else {
+		console.log("wrangler is already installed.");
+	}
+}
+
+/**
  * Generates a netlify.toml file at the specified destination path.
  *
  * @param {string} destination - The path where the netlify.toml file should be generated.
  */
-function generateNetlifyToml(destination) {
+async function generateNetlifyToml(destination) {
 	const tomlContent = `
 [build]
   command = "${packageManagerCommands[selectedPackageManager].build}"
@@ -267,7 +306,7 @@ function generateNetlifyToml(destination) {
 `;
 
 	const tomlPath = path.join(destination, "netlify.toml");
-	fs.writeFileSync(tomlPath, tomlContent.trim() + "\n");
+	await fs.writeFile(tomlPath, tomlContent.trim() + "\n");
 	console.log(`Generated 'netlify.toml' at ${tomlPath}`);
 }
 
@@ -421,11 +460,11 @@ async function ensureConnectedToGitHub(destination) {
 async function deployToNetlify(destination) {
 	console.log("Deploying to Netlify...");
 
-	generateNetlifyToml(destination);
+	await generateNetlifyToml(destination);
 
 	// Remove the functions folder
 	const functionsDir = path.join(destination, "functions");
-	deleteDirectoryRecursive(functionsDir);
+	await deleteDirectoryRecursive(functionsDir);
 	console.log(`Removed 'functions' directory from ${destination} as is only needed for cloudflare pages.`);
 
 	// Ensure that netlify-cli is installed
@@ -462,11 +501,34 @@ async function deployToNetlify(destination) {
  * @returns {Promise<void>} - A Promise that resolves when the deployment is complete.
  */
 async function deployToCloudflare(destination) {
-	// Placeholder for Cloudflare Pages deployment logic.
-	console.warn("Cloudflare Pages deployment not implemented yet.");
+	console.log("Deploying to Cloudflare pages...");
 
-	// Ensure that the directory is connected to a GitHub repo
-	// ensureConnectedToGitHub(destination);
+	// Ensure that wrangler is installed
+	ensureWranglerCLI();
+
+	// Ensure the directory is connected to GitHub
+	const isGitHubConnected = await ensureConnectedToGitHub(destination); // This function now might return a boolean value.
+
+	// Check the GitHub connection status and decide the deployment strategy
+	console.log(`Starting cloudflare pages deployment, it could take some seconds.`);
+
+	if (isGitHubConnected) {
+		// Connected to GitHub, so setup continuous deployment
+		try {
+			execSync(`wrangler pages deploy ${destination}`, { stdio: "inherit" });
+			console.log("Continuous deployment to Cloudflare pages set up successfully.");
+		} catch (error) {
+			console.error("Failed to set up continuous deployment to Cloudflare pages:", error.message);
+		}
+	} else {
+		// Not connected to GitHub, do a manual deploy
+		try {
+			execSync(`wrangler pages deploy ${destination}`, { stdio: "inherit" });
+			console.log("Deployment to Cloudflare pages completed successfully.");
+		} catch (error) {
+			console.error("Failed to deploy to Cloudflare pages:", error.message);
+		}
+	}
 }
 
 /**
@@ -519,7 +581,7 @@ function displayWelcomeMessage(publishProject, publishProjectLocation) {
 	log("=  PROJECT SUCCESSFULLY CREATED  =");
 	log("==================================");
 	log("\nYour project has been successfully initialized!\n");
-	log("Here are some helpful commands to get you started:");
+	log("Here are some helpful tips to get you started:");
 	log(`\n1. [Run the project]: ${packageManagerCommands[selectedPackageManager].dev}`);
 
 	if (publishProject && publishProjectLocation) {
@@ -602,9 +664,9 @@ async function main() {
 
 		ensurePackageManagerInstalled(selectedPackageManager);
 
-		if (!fs.existsSync(destination)) {
-			fs.mkdirSync(destination, { recursive: true });
-		} else if (fs.readdirSync(destination).filter((file) => file !== ".git").length > 0) {
+		if (!(await exists(destination))) {
+			await fs.mkdir(destination, { recursive: true });
+		} else if ((await fs.readdir(destination)).filter((file) => file !== ".git").length > 0) {
 			const { confirm } = await inquirer.prompt([
 				{
 					type: "confirm",
@@ -623,15 +685,15 @@ async function main() {
 			const lockFiles = ["package-lock.json", "yarn.lock", "pnpm-lock.yaml"];
 			for (const lockFile of lockFiles) {
 				const lockFilePath = path.join(destination, lockFile);
-				if (fs.existsSync(lockFilePath)) {
-					fs.unlinkSync(lockFilePath);
+				if (await exists(lockFilePath)) {
+					await fs.unlink(lockFilePath);
 					console.log(`Removed ${lockFile}`);
 				}
 			}
 
 			const nodeModulesPath = path.join(destination, "node_modules");
-			if (fs.existsSync(nodeModulesPath)) {
-				fs.rmdirSync(nodeModulesPath, { recursive: true });
+			if (await exists(nodeModulesPath)) {
+				await fs.rmdir(nodeModulesPath, { recursive: true });
 				console.log(`Removed node_modules`);
 			}
 		}
@@ -641,7 +703,7 @@ async function main() {
 
 		// Update package.json with the new name and author
 		const packageJsonPath = path.join(destination, "package.json");
-		const packageData = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
+		const packageData = JSON.parse(await fs.readFile(packageJsonPath, "utf-8"));
 		if (packageName) {
 			packageData.name = packageName;
 		}
@@ -653,7 +715,10 @@ async function main() {
 		delete packageData.repository;
 		delete packageData.homepage;
 		delete packageData.bugs;
-		fs.writeFileSync(packageJsonPath, JSON.stringify(packageData, null, 2));
+		if (packageData.dependencies && packageData.dependencies["inquirer"]) {
+			delete packageData.dependencies["inquirer"];
+		}
+		await fs.writeFile(packageJsonPath, JSON.stringify(packageData, null, 2));
 
 		console.log(`Project initialized in ${destination}`);
 
@@ -676,7 +741,8 @@ async function main() {
 
 		displayWelcomeMessage(publishProject, publishProjectLocation);
 
-		uninstallInquirer(destination);
+		// It should not be necessary as it should be already been removed previously
+		uninstallInquirerIfNeeded(destination);
 
 		// Ask the user if they want to run the project, but only after the publishing step.
 		const { runProject: shouldRunProject } = await inquirer.prompt([
