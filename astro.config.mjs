@@ -5,15 +5,27 @@ import tailwind from "@astrojs/tailwind";
 import alpinejs from "@astrojs/alpinejs";
 import NetlifyCMS from "astro-netlify-cms";
 import { i18n, filterSitemapByDefaultLocale } from "astro-i18n-aut/integration";
-import { DEFAULT_LOCALE, LOCALES, SITE_URL } from "./src/consts";
+import { DEFAULT_LOCALE, LOCALES, SITE_URL, HOSTING_SERVICE, REPO, DEFAULT_BRANCH } from "./src/consts";
 
 const defaultLocale = DEFAULT_LOCALE;
 const locales = LOCALES;
 
 let netlifyCMSBackendConfig = {
-	name: "git-gateway",
-	branch: "main",
+	name: "github",
+	repo: REPO,
+	branch: DEFAULT_BRANCH,
+	base_url: SITE_URL,
+	auth_endpoint: "/api/auth",
 };
+
+if (HOSTING_SERVICE === "netlify") {
+	netlifyCMSBackendConfig = {
+		name: "git-gateway",
+		repo: REPO,
+		branch: DEFAULT_BRANCH,
+		base_url: SITE_URL,
+	};
+}
 
 // https://astro.build/config
 export default defineConfig({
