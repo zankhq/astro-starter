@@ -41,7 +41,7 @@ jobs:
                   NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
               run: echo "new tag $NEW_TAG"
             - name: "Upload modified files"
-              uses: actions/upload-artifact@v2
+              uses: actions/upload-artifact@v3
               with:
                   name: modified-files
                   path: |
@@ -58,7 +58,7 @@ jobs:
             - name: "Checkout source code"
               uses: actions/checkout@v3
             - name: "Download modified files"
-              uses: actions/download-artifact@v2
+              uses: actions/download-artifact@v3
               with:
                   name: modified-files
             - name: "Setup node"
