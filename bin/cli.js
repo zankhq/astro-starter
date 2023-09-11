@@ -41,8 +41,6 @@ function copyRecursive(src, dest) {
 
 rl.question('Where would you like to create the new project? (Provide a directory path, use "." for current directory)', (destination) => {
 	rl.question("Do you want to install the packages now? (y/n) ", (answer) => {
-		rl.close();
-
 		try {
 			if (!fs.existsSync(destination)) {
 				fs.mkdirSync(destination, { recursive: true });
@@ -62,8 +60,6 @@ rl.question('Where would you like to create the new project? (Provide a director
 				console.log(`Packages installed successfully in ${destination}`);
 
 				rl.question("Do you want to run the project now? (y/n) ", (answer) => {
-					rl.close();
-
 					try {
 						if (answer.toLowerCase() === "y" || answer.toLowerCase() === "yes") {
 							execSync(`cd ${destination} && pnpm dev`, { stdio: "inherit" });
@@ -73,12 +69,15 @@ rl.question('Where would you like to create the new project? (Provide a director
 					} catch (error) {
 						console.error("Failed to run the project:", error.message);
 					}
+					rl.close();
 				});
 			} else {
 				console.log(`You can run 'pnpm install' in ${destination} whenever you're ready.`);
+				rl.close();
 			}
 		} catch (error) {
 			console.error("Failed to create the project:", error.message);
+			rl.close();
 		}
 	});
 });
