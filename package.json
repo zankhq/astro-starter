@@ -11,9 +11,6 @@
 	},
 	"bugs": "https://github.com/zankhq/astro-starter/issues",
 	"homepage": "https://github.com/zankhq/astro-starter",
-	"exports": {
-		".": "./bin/cli.js"
-	},
 	"main": "./bin/cli.js",
 	"bin": {
 		"create-astro-starter": "./bin/cli.js"
