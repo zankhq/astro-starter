@@ -1,5 +1,10 @@
 ---
-const { class: className, ...props } = Astro.props;
+interface ContainerProps {
+	class?: string;
+	[key: string]: any;
+}
+
+const { class: className, ...props }: ContainerProps = Astro.props;
 ---
 
 <div {...props} class:list={["mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"]}>

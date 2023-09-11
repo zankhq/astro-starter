@@ -20,6 +20,7 @@ const { image, title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.prop
 <html lang={locale}>
 	<head>
 		<BaseHead title={title} description={description} image={image} />
+		{/* Comment the line below if you want to remove client side routing */}
 		<ViewTransitions />
 	</head>
 
