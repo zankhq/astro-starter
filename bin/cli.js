@@ -39,45 +39,70 @@ function copyRecursive(src, dest) {
 	}
 }
 
-rl.question('Where would you like to create the new project? (Provide a directory path, use "." for current directory)', (destination) => {
-	rl.question("Do you want to install the packages now? (y/n) ", (answer) => {
-		try {
-			if (!fs.existsSync(destination)) {
-				fs.mkdirSync(destination, { recursive: true });
-			}
+function getGitAuthorName() {
+	try {
+		const name = execSync("git config user.name", { encoding: "utf8" }).trim();
+		return name;
+	} catch (error) {
+		console.warn("Failed to get git user name:", error.message);
+		return "your name"; // or a default value
+	}
+}
 
-			// Initialize the package with npm
-			execSync(`cd ${destination} && npm init -y`, { stdio: "inherit" });
+rl.question("How would you like to name your package? ", (packageName) => {
+	rl.question('Where would you like to create the new project? (Provide a directory path, use "." for current directory)', (destination) => {
+		rl.question("Do you want to install the packages now? (y/n) ", (answer) => {
+			try {
+				if (!fs.existsSync(destination)) {
+					fs.mkdirSync(destination, { recursive: true });
+				}
 
-			// Copy all files and subdirectories from the root directory to the destination, excluding the specified ones
-			copyRecursive(rootDir, destination);
+				// Copy all files and subdirectories from the root directory to the destination, excluding the specified ones
+				copyRecursive(rootDir, destination);
 
-			console.log(`Project initialized in ${destination}`);
+				// Update package.json with the new name and author
+				const packageJsonPath = path.join(destination, "package.json");
+				const packageData = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
+				if (packageName) {
+					packageData.name = packageName;
+				}
+				packageData.varsion = "0.0.1";
+				packageData.author = getGitAuthorName(); // Set the author from git config
+				delete packageData.bin; // Remove the bin property from package.json
+				delete packageData.files;
+				delete packageData.main;
+				delete packageData.repository;
+				delete packageData.homepage;
+				delete packageData.bugs;
+				fs.writeFileSync(packageJsonPath, JSON.stringify(packageData, null, 2));
 
-			// Check user's answer and run pnpm install if confirmed
-			if (answer.toLowerCase() === "y" || answer.toLowerCase() === "yes") {
-				execSync(`cd ${destination} && pnpm install`, { stdio: "inherit" });
-				console.log(`Packages installed successfully in ${destination}`);
+				console.log(`Project initialized in ${destination}`);
 
-				rl.question("Do you want to run the project now? (y/n) ", (answer) => {
-					try {
-						if (answer.toLowerCase() === "y" || answer.toLowerCase() === "yes") {
-							execSync(`cd ${destination} && pnpm dev`, { stdio: "inherit" });
-						} else {
-							console.log(`You can run 'pnpm dev' in ${destination} whenever you're ready.`);
+				// Check user's answer and run pnpm install if confirmed
+				if (answer.toLowerCase() === "y" || answer.toLowerCase() === "yes") {
+					execSync(`cd ${destination} && pnpm install`, { stdio: "inherit" });
+					console.log(`Packages installed successfully in ${destination}`);
+
+					rl.question("Do you want to run the project now? (y/n) ", (answer) => {
+						try {
+							if (answer.toLowerCase() === "y" || answer.toLowerCase() === "yes") {
+								execSync(`cd ${destination} && pnpm dev`, { stdio: "inherit" });
+							} else {
+								console.log(`You can run 'pnpm dev' in ${destination} whenever you're ready.`);
+							}
+						} catch (error) {
+							console.error("Failed to run the project:", error.message);
 						}
-					} catch (error) {
-						console.error("Failed to run the project:", error.message);
-					}
+						rl.close();
+					});
+				} else {
+					console.log(`You can run 'pnpm install' in ${destination} whenever you're ready.`);
 					rl.close();
-				});
-			} else {
-				console.log(`You can run 'pnpm install' in ${destination} whenever you're ready.`);
+				}
+			} catch (error) {
+				console.error("Failed to create the project:", error.message);
 				rl.close();
 			}
-		} catch (error) {
-			console.error("Failed to create the project:", error.message);
-			rl.close();
-		}
+		});
 	});
 });
