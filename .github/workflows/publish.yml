@@ -3,60 +3,64 @@ name: Publish npm package
 on: push
 
 env:
-  NPM_TOKEN: ${{secrets.GH_PRIVATE_NPM_TOKEN}}
+    NPM_TOKEN: ${{secrets.GH_PRIVATE_NPM_TOKEN}}
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 'Checkout source code'
-        uses: actions/checkout@v3
-      - name: 'Setup node'
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-      - name: 'Check build'
-        run: npm ci
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: "Checkout source code"
+              uses: actions/checkout@v3
+            - name: "Setup node"
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18.x
+            - name: "Install pnpm"
+              run: npm install -g pnpm
+            - name: "Check build"
+              run: pnpm install
 
-  bump-version:
-    needs: build
-    name: 'Bump Version on main'
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: 'Checkout source code'
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.ref }}
-      - name: 'cat package.json'
-        run: cat ./package.json
-      - name: 'Automated Version Bump'
-        id: version-bump
-        uses: 'phips28/gh-action-bump-version@master'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: 'cat package.json'
-        run: cat ./package.json
-      - name: 'Output Step'
-        env:
-          NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
-        run: echo "new tag $NEW_TAG"
+    bump-version:
+        needs: build
+        name: "Bump Version on main"
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/main'
+        steps:
+            - name: "Checkout source code"
+              uses: actions/checkout@v3
+              with:
+                  ref: ${{ github.ref }}
+            - name: "cat package.json"
+              run: cat ./package.json
+            - name: "Automated Version Bump"
+              id: version-bump
+              uses: "phips28/gh-action-bump-version@master"
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: "cat package.json"
+              run: cat ./package.json
+            - name: "Output Step"
+              env:
+                  NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
+              run: echo "new tag $NEW_TAG"
 
-  publish-gpr:
-    needs: bump-version
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
-    steps:
-      - name: 'Checkout source code'
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: main
-      - name: 'Setup node'
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-      - name: 'Publish package if needed'
-        run: npx can-npm-publish --verbose && npm publish || echo "Does not publish"
+    publish-gpr:
+        needs: bump-version
+        runs-on: ubuntu-latest
+        permissions:
+            packages: write
+            contents: read
+        steps:
+            - name: "Checkout source code"
+              uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0
+                  ref: main
+            - name: "Setup node"
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18.x
+            - name: "Install pnpm"
+              run: npm install -g pnpm
+            - name: "Publish package if needed"
+              run: npx can-npm-publish --verbose && pnpm publish || echo "Does not publish"
