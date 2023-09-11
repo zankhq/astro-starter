@@ -1,29 +1,54 @@
-#!/usr/bin/env node
-
 import readline from "readline";
+import fs from "fs";
+import path from "path";
 import { execSync } from "child_process";
-import fs from  "fs";
 
 const rl = readline.createInterface({
 	input: process.stdin,
 	output: process.stdout,
 });
 
-rl.question("Where would you like to download the package? (Provide a directory path) ", (downloadPath) => {
-	// Close the readline interface
+const rootDir = path.dirname(require.main.filename);
+
+const exclusions = ["node_modules", "bin"]; // Add any additional directories you want to exclude here
+
+function copyRecursive(src, dest) {
+	const exists = fs.existsSync(src);
+	const stats = exists && fs.statSync(src);
+	const isDirectory = exists && stats.isDirectory();
+	const isExcluded = exclusions.includes(path.basename(src));
+
+	if (isExcluded) return;
+
+	if (isDirectory) {
+		if (!fs.existsSync(dest)) {
+			fs.mkdirSync(dest);
+		}
+
+		fs.readdirSync(src).forEach((child) => {
+			copyRecursive(path.join(src, child), path.join(dest, child));
+		});
+	} else {
+		fs.copyFileSync(src, dest);
+	}
+}
+
+rl.question("Where would you like to create the new project? (Provide a directory path) ", (destination) => {
 	rl.close();
 
 	try {
-		// Ensure the directory exists or create it
-		if (!fs.existsSync(downloadPath)) {
-			fs.mkdirSync(downloadPath, { recursive: true });
+		if (!fs.existsSync(destination)) {
+			fs.mkdirSync(destination, { recursive: true });
 		}
 
-		// Navigate to the specified directory and install the package
-		execSync(`cd ${downloadPath} && npm init -y && npm install your-package-name`, { stdio: "inherit" });
+		// Initialize the package with npm
+		execSync(`cd ${destination} && npm init -y`, { stdio: "inherit" });
 
-		console.log(`Package downloaded successfully to ${downloadPath}`);
+		// Copy all files and subdirectories from the root directory to the destination, excluding the specified ones
+		copyRecursive(rootDir, destination);
+
+		console.log(`Project initialized in ${destination}`);
 	} catch (error) {
-		console.error("Failed to download the package:", error.message);
+		console.error("Failed to create the project:", error.message);
 	}
 });
