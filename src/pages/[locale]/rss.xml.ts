@@ -3,12 +3,21 @@ import rss from "@astrojs/rss";
 import { getCollection } from "astro:content";
 import { SITE_TITLE, SITE_DESCRIPTION, DEFAULT_LOCALE, LOCALES } from "../../consts";
 
-// i18n RSS feed
-
+/**
+ * Generates an array of static paths for all supported locales.
+ * @returns An array of objects containing the `params` property for each supported locale.
+ */
 export function getStaticPaths() {
 	return Object.keys(LOCALES).map((locale) => ({ params: { locale } }));
 }
 
+/**
+ * Generates an RSS feed for a specific locale.
+ * @param params - An object containing the `locale` parameter.
+ * @param redirect - A function to redirect the user to a different URL.
+ * @param site - An object containing information about the current site.
+ * @returns A response object containing the generated RSS feed.
+ */
 export const get: APIRoute = async function get({ params, redirect, site }) {
 	const locale = params.locale;
 
