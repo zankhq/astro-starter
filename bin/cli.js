@@ -13,9 +13,41 @@ const rootDir = path.join(__dirname, "..");
 
 const exclusions = ["node_modules", "bin", ".git", ".astro"]; // Add any additional directories you want to exclude here
 
+let selectedPackageManager = "pnpm";
+
+const packageManagerCommands = {
+	npm: {
+		install: "npm install",
+		run: "npm run",
+		build: "npm run build",
+		list: "npm list",
+		globalAdd: "npm install -g",
+		globalList: "npm list -g",
+		remove: "npm uninstall",
+	},
+	pnpm: {
+		install: "pnpm install",
+		run: "pnpm run",
+		build: "pnpm run build",
+		list: "pnpm list",
+		globalAdd: "pnpm add -g",
+		globalList: "pnpm list -g",
+		remove: "pnpm remove",
+	},
+	yarn: {
+		install: "yarn",
+		run: "yarn",
+		build: "yarn build",
+		list: "yarn list",
+		globalAdd: "yarn global add",
+		globalList: "yarn global list",
+		remove: "yarn remove",
+	},
+};
+
 function uninstallInquirer() {
 	console.log("Uninstalling inquirer...");
-	execSync("pnpm remove inquirer", {
+	execSync(`${packageManagerCommands[selectedPackageManager].remove} inquirer`, {
 		stdio: "inherit",
 	});
 }
@@ -78,9 +110,9 @@ function getGitAuthorName() {
 
 function ensureNetlifyCLI() {
 	// We assume that if `pnpm list -g netlify-cli` command doesn't throw an error, then netlify-cli is installed.
-	if (!isCommandAvailable("pnpm list -g netlify-cli")) {
+	if (!isCommandAvailable(`${packageManagerCommands[selectedPackageManager].list} -g netlify-cli`)) {
 		console.log("netlify-cli is not installed. Installing using pnpm...");
-		execSync("pnpm add -g netlify-cli", { stdio: "inherit" });
+		execSync(`${packageManagerCommands[selectedPackageManager].globalAdd} netlify-cli`, { stdio: "inherit" });
 		console.log("netlify-cli installed successfully.");
 	} else {
 		console.log("netlify-cli is already installed.");
@@ -90,8 +122,9 @@ function ensureNetlifyCLI() {
 function generateNetlifyToml(destination) {
 	const tomlContent = `
 [build]
-  publish = "public/"
-  command = "pnpm run build"
+  command = "${packageManagerCommands[selectedPackageManager].build}"
+  functions = "netlify/functions"
+  publish = "dist"
 `;
 
 	const tomlPath = path.join(destination, "netlify.toml");
@@ -135,12 +168,30 @@ function isRepoConnectedToGitHub() {
 	}
 }
 
-function pushToGitHub() {
+async function pushToGitHub() {
 	try {
 		execSync("git push -u origin main", { stdio: "inherit" }); // assuming you're pushing the main branch
 	} catch (error) {
 		console.error("Failed to push to GitHub:", error.message);
+
+		const { confirmContinue } = await inquirer.prompt([
+			{
+				type: "confirm",
+				name: "confirmContinue",
+				message: `Failed to push changes to github, do you want to continue anyway?`,
+				default: false,
+			},
+		]);
+
+		if (!confirmContinue) {
+			console.log("Aborted. Exiting...");
+			process.exit(1); // Terminate the program.
+		} else {
+			return false;
+		}
 	}
+
+	return true;
 }
 
 async function ensureConnectedToGitHub(destination) {
@@ -177,12 +228,14 @@ async function ensureConnectedToGitHub(destination) {
 
 		// If GitHub CLI is installed, then continue with the process
 		createGitHubRepo(path.basename(destination)); // Create a new GitHub repo with the name of the destination directory
-		execSync("git add .", { stdio: "inherit" }); // Stage all files
-		execSync('git commit -m "Initial commit"', { stdio: "inherit" }); // Commit changes
-		pushToGitHub(); // Push changes to the new GitHub repo
-		return true;
 	}
-	return true; // This handles the case where the repo is already connected to GitHub
+
+	console.log("Pushing all local changes to github.");
+	execSync("git add .", { stdio: "inherit" }); // Stage all files
+	execSync('git commit -m "Initial commit" --allow-empty', { stdio: "inherit" }); // Commit changes
+	var success = await pushToGitHub(); // Push changes to the new GitHub repo
+
+	return success; // This handles the case where the repo is already connected to GitHub
 }
 
 async function deployToNetlify(destination) {
@@ -236,7 +289,7 @@ async function main() {
 	try {
 		const currentDirName = path.basename(process.cwd());
 
-		const { packageName, destination, publishProject, publishProjectLocation } = await inquirer.prompt([
+		const { packageName, destination, packageManager, publishProject, publishProjectLocation } = await inquirer.prompt([
 			{
 				type: "input",
 				name: "packageName",
@@ -248,6 +301,13 @@ async function main() {
 				name: "destination",
 				message: 'Where would you like to create the new project? (Provide a directory path, use "." for current directory)',
 				default: ".",
+			},
+			{
+				type: "list",
+				name: "packageManager",
+				message: "Which package manager would you like to use?",
+				choices: ["npm", "pnpm", "yarn"],
+				default: "pnpm",
 			},
 			{
 				type: "confirm",
@@ -267,10 +327,24 @@ async function main() {
 			},
 		]);
 
-		// The rest of your logic to handle these answers goes here...
+		selectedPackageManager = packageManager;
 
 		if (!fs.existsSync(destination)) {
 			fs.mkdirSync(destination, { recursive: true });
+		} else if (fs.readdirSync(destination).filter((file) => file !== ".git").length > 0) {
+			const { confirm } = await inquirer.prompt([
+				{
+					type: "confirm",
+					name: "confirm",
+					message: `The directory ${destination} is not empty. Are you sure you want to proceed and overwrite its contents?`,
+					default: false,
+				},
+			]);
+
+			if (!confirm) {
+				console.log("Aborted. Exiting...");
+				return;
+			}
 		}
 
 		// Copy all files and subdirectories from the root directory to the destination
@@ -307,6 +381,10 @@ async function main() {
 			}
 		}
 
+		console.log(`Starting packages intallation ${destination}`);
+		execSync(`cd ${destination} && ${packageManagerCommands[selectedPackageManager].install}`, { stdio: "inherit" });
+		console.log(`Packages installed successfully in ${destination}`);
+
 		// Ask the user if they want to run the project, but only after the publishing step.
 		const { runProject: shouldRunProject } = await inquirer.prompt([
 			{
@@ -317,17 +395,16 @@ async function main() {
 			},
 		]);
 
+		uninstallInquirer();
+
 		// Ask user ro run the project or not
 		if (shouldRunProject) {
-			execSync(`cd ${destination} && pnpm install`, { stdio: "inherit" });
-			console.log(`Packages installed successfully in ${destination}`);
-			execSync(`cd ${destination} && pnpm dev`, { stdio: "inherit" });
+			execSync(`cd ${destination} && ${packageManagerCommands[selectedPackageManager].dev}`, { stdio: "inherit" });
 		} else if (publishProject) {
-			console.log(`You can run 'pnpm dev' in ${destination} whenever you're ready.`);
+			console.log(`You can run '${packageManagerCommands[selectedPackageManager].dev}' in ${destination} whenever you're ready.`);
 		}
 
 		// Once everything is done, uninstall inquirer
-		uninstallInquirer();
 	} catch (error) {
 		console.error("Failed to create the project:", error.message);
 	}
