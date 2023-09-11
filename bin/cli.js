@@ -496,11 +496,12 @@ async function deployToNetlify(destination) {
 }
 
 /**
- * Deploys the project to Cloudflare Pages.
- * @param {string} destination - The directory path of the project to be deployed.
- * @returns {Promise<void>} - A Promise that resolves when the deployment is complete.
+ * Deploys a package to Cloudflare pages.
+ * @param {string} packageName - The name of the package to deploy.
+ * @param {string} destination - The destination directory to deploy to.
+ * @returns {void}
  */
-async function deployToCloudflare(destination) {
+async function deployToCloudflare(packageName, destination) {
 	console.log("Deploying to Cloudflare pages...");
 
 	// Ensure that wrangler is installed
@@ -515,15 +516,15 @@ async function deployToCloudflare(destination) {
 	if (isGitHubConnected) {
 		// Connected to GitHub, so setup continuous deployment
 		try {
-			execSync(`wrangler pages deploy ${destination}`, { stdio: "inherit" });
-			console.log("Continuous deployment to Cloudflare pages set up successfully.");
+			execSync(`wrangler pages project create ${packageName}`, { stdio: "inherit" });
+			console.log("Cloudflare pages project set up successfully.");
 		} catch (error) {
 			console.error("Failed to set up continuous deployment to Cloudflare pages:", error.message);
 		}
 	} else {
 		// Not connected to GitHub, do a manual deploy
 		try {
-			execSync(`wrangler pages deploy ${destination}`, { stdio: "inherit" });
+			execSync(`${packageManagerCommands[selectedPackageManager].build} && wrangler pages deploy dist`, { stdio: "inherit", cwd: destination });
 			console.log("Deployment to Cloudflare pages completed successfully.");
 		} catch (error) {
 			console.error("Failed to deploy to Cloudflare pages:", error.message);
@@ -728,7 +729,7 @@ async function main() {
 					await deployToNetlify(destination);
 					break;
 				case "cloudflare pages":
-					await deployToCloudflare(destination);
+					await deployToCloudflare(packageName, destination);
 					break;
 				default:
 					console.error("Unknown deployment option:", publishProjectLocation);
