@@ -2,6 +2,10 @@
   Place global styles here.
  */
 
+* {
+	@apply box-border;
+}
+
 body {
-	@apply bg-stone-50 dark:bg-stone-800 text-stone-800 dark:text-stone-50;
+	@apply bg-stone-50 dark:bg-stone-800 text-stone-800 dark:text-stone-50 transition-all duration-300;
 }
