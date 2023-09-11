@@ -25,11 +25,17 @@ jobs:
         runs-on: ubuntu-latest
         if: github.ref == 'refs/heads/main'
         steps:
+            - name: "Checkout source code"
+              uses: actions/checkout@v3
+            - name: "cat package.json (before bump)"
+              run: cat ./package.json
             - name: "Automated Version Bump"
               id: version-bump
               uses: "phips28/gh-action-bump-version@master"
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: "cat package.json (after bump)"
+              run: cat ./package.json
             - name: "Output New Version"
               env:
                   NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
@@ -42,5 +48,13 @@ jobs:
             packages: write
             contents: read
         steps:
+            - name: "Checkout source code"
+              uses: actions/checkout@v3
+            - name: "Setup node"
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18.x
+            - name: "Install pnpm"
+              run: npm install -g pnpm
             - name: "Publish package if needed"
               run: npx can-npm-publish --verbose && pnpm publish || echo "Does not publish"
