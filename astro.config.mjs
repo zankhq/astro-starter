@@ -31,6 +31,7 @@ export default defineConfig({
 		i18n({
 			locales,
 			defaultLocale,
+			exclude: ["pages/api/**/*", "pages/rss.xml.ts", "pages/[locale]/rss.xml.ts"],
 		}),
 		NetlifyCMS({
 			config: {
