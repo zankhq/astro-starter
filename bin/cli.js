@@ -489,6 +489,11 @@ async function deployToNetlify(destination) {
 	} else {
 		// Not connected to GitHub, do a manual deploy
 		try {
+			console.log(`Starting packages installation and build on ${destination}`);
+			execSync(`${packageManagerCommands[selectedPackageManager].install}`, { stdio: "inherit", cwd: destination });
+			execSync(`${packageManagerCommands[selectedPackageManager].build}`, { stdio: "inherit", cwd: destination });
+			console.log(`Installation and build completed successfully. Starting netlify deployment...`);
+
 			execSync("netlify deploy --prod", { stdio: "inherit", cwd: destination });
 			console.log("Deployment to Netlify completed successfully.");
 		} catch (error) {
@@ -498,12 +503,12 @@ async function deployToNetlify(destination) {
 
 	// Update HOSTING_SERVICE value in the src/const.ts file
 	const constsFilePath = path.join(destination, "src", "const.ts");
-	const content = fs.readFileSync(constsFilePath, "utf8");
+	const content = await fs.readFile(constsFilePath, "utf8");
 	const updatedContent = content.replace(
 		/export const HOSTING_SERVICE: "cloudflare" \| "netlify" \| "none" = "[^"]+";/,
 		`export const HOSTING_SERVICE: "cloudflare" | "netlify" | "none" = "netlify";`,
 	);
-	fs.writeFileSync(constsFilePath, updatedContent, "utf8");
+	await fs.writeFile(constsFilePath, updatedContent, "utf8");
 	console.log("Updated HOSTING_SERVICE value to 'netlify' in src/const.ts");
 }
 
@@ -536,7 +541,12 @@ async function deployToCloudflare(packageName, destination) {
 	} else {
 		// Not connected to GitHub, do a manual deploy
 		try {
-			execSync(`${packageManagerCommands[selectedPackageManager].build} && wrangler pages deploy dist`, { stdio: "inherit", cwd: destination });
+			console.log(`Starting packages installation and build on ${destination}`);
+			execSync(`${packageManagerCommands[selectedPackageManager].install}`, { stdio: "inherit", cwd: destination });
+			execSync(`${packageManagerCommands[selectedPackageManager].build}`, { stdio: "inherit", cwd: destination });
+			console.log(`Installation and build completed successfully. Starting netlify deployment...`);
+
+			execSync(`wrangler pages deploy dist`, { stdio: "inherit", cwd: destination });
 			console.log("Deployment to Cloudflare pages completed successfully.");
 		} catch (error) {
 			console.error("Failed to deploy to Cloudflare pages:", error.message);
