@@ -55,9 +55,12 @@ jobs:
               with:
                   node-version: 18.x
             - name: "Install pnpm"
-              run: npm install -g pnpm
+              run: |
+                  npm install -g pnpm
+                  pnpm setup
             - name: "Install can-npm-publish"
-              run: pnpm add -g can-npm-publish
+              run: |
+                  pnpm add can-npm-publish --save-dev
             - name: "Git status check"
               run: git status
             - name: "Cleanup Git"
