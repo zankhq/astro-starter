@@ -58,6 +58,8 @@ jobs:
               run: |
                   npm install -g pnpm
                   pnpm setup
+              env:
+                  SHELL: bash
             - name: "Install can-npm-publish"
               run: |
                   pnpm add can-npm-publish --save-dev
