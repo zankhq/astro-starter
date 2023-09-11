@@ -56,6 +56,14 @@ jobs:
                   node-version: 18.x
             - name: "Install pnpm"
               run: npm install -g pnpm
+            - name: "Install can-npm-publish"
+              run: pnpm add -g can-npm-publish
+            - name: "Git status check"
+              run: git status
+            - name: "Cleanup Git"
+              run: |
+                  git reset --hard
+                  git clean -fd
             - name: Setup .npmrc file to authenticate with npm
               run: |
                   echo "//registry.npmjs.org/:_authToken=${{ env.NPM_TOKEN }}" > .npmrc
