@@ -40,6 +40,13 @@ jobs:
               env:
                   NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
               run: echo "new tag $NEW_TAG"
+            - name: "Upload modified files"
+              uses: actions/upload-artifact@v2
+              with:
+                  name: modified-files
+                  path: |
+                      ./package.json
+                      ./package-lock.json
 
     publish-gpr:
         needs: bump-version
@@ -50,6 +57,10 @@ jobs:
         steps:
             - name: "Checkout source code"
               uses: actions/checkout@v3
+            - name: "Download modified files"
+              uses: actions/download-artifact@v2
+              with:
+                  name: modified-files
             - name: "Setup node"
               uses: actions/setup-node@v3
               with:
