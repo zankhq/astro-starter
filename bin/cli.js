@@ -3,13 +3,16 @@ import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
 import { fileURLToPath } from "url";
+import { dirname } from "path";
 
 const rl = readline.createInterface({
 	input: process.stdin,
 	output: process.stdout,
 });
 
-const rootDir = path.dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const rootDir = path.join(__dirname, "..");
 
 const exclusions = ["node_modules", "bin"]; // Add any additional directories you want to exclude here
 
