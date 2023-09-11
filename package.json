@@ -1,7 +1,23 @@
 {
-	"name": "astro-starter",
+	"name": "create-astro-starter",
 	"type": "module",
 	"version": "0.0.1",
+	"author": "Giulio Zanchetta",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/zankhq/astro-starter.git",
+		"directory": "packages/create-astro"
+	},
+	"bugs": "https://github.com/zankhq/astro-starter/issues",
+	"homepage": "https://github.com/zankhq/astro-starter",
+	"exports": {
+		".": "./bin/cli.js"
+	},
+	"main": "./bin/cli.js",
+	"bin": {
+		"create-astro-starter": "./bin/cli.js"
+	},
 	"scripts": {
 		"dev": "astro dev",
 		"start": "astro dev",
