@@ -1,7 +1,7 @@
 {
 	"name": "create-astro-starter",
 	"type": "module",
-	"version": "0.0.18",
+	"version": "0.0.19",
 	"author": "Giulio Zanchetta",
 	"license": "MIT",
 	"repository": {
