@@ -157,16 +157,18 @@ function uninstallInquirerIfNeeded(destination) {
  */
 async function deleteDirectoryRecursive(directoryPath) {
 	if (await exists(directoryPath)) {
-		(await fs.readdir(directoryPath)).forEach(async (file, index) => {
+		const files = await fs.readdir(directoryPath);
+		for (const file of files) {
 			const curPath = path.join(directoryPath, file);
-			if ((await fs.lstat(curPath)).isDirectory()) {
+			const stats = await fs.lstat(curPath);
+			if (stats.isDirectory()) {
 				// Recursive delete if it's a directory
 				await deleteDirectoryRecursive(curPath);
 			} else {
 				// Delete the file
 				await fs.unlink(curPath);
 			}
-		});
+		}
 		await fs.rmdir(directoryPath); // Remove the directory itself
 	}
 }
