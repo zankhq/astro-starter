@@ -1,18 +1,15 @@
 # Astro Starter Kit
 
-```
-npm create astro-starter@latest
-```
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/zankhq/astro-starter)
 [![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/zankhq/astro-starter)
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/zankhq/astro-starter?devcontainer_path=.devcontainer/blog/devcontainer.json)
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+```
+npm create astro-starter@latest
+```
 
-![blog](https://github.com/withastro/astro/assets/2244813/ff10799f-a816-4703-b967-c78997e8323d)
-
-Features:
+### Features:
 
 - ✅ Tailwind CSS
 - ✅ Alpine js
@@ -20,9 +17,24 @@ Features:
 - ✅ Blog
 - ✅ Discussions (thanks to giscus)
 - ✅ CMS for editing blog post (thanks to decap CMS)
-- ❌ PWA
+- ❌ PWA (Follow tutorial below to add it)
 
-## 🚀 Project Structure
+### 🧞 Commands
+
+All commands are run from the root of the project, from a terminal:
+
+| Command                    | Action                                           |
+| :------------------------- | :----------------------------------------------- |
+| `pnpm install`             | Installs dependencies                            |
+| `pnpm run dev`             | Starts local dev server at `localhost:4321`      |
+| `pnpm run build`           | Build your production site to `./dist/`          |
+| `pnpm run preview`         | Preview your build locally, before deploying     |
+| `pnpm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
+| `pnpm run astro -- --help` | Get help using the Astro CLI                     |
+
+If you want to switch to npm make sure to remove pnpm-lock.yaml and node_modules folder and then run `npm install`
+
+### 🚀 Project Structure
 
 Inside of your Astro project, you'll see the following folders and files:
 
@@ -54,7 +66,7 @@ The `src/content/` directory contains "collections" of related Markdown and MDX 
 
 Any static assets, like images, can be placed in the `public/` directory.
 
-## ✍️ Admin dashboard
+### ✍️ Admin dashboard
 
 You can access the admin dashboard for editing blog post at `/admin` (https://example.com/admin)
 
@@ -70,23 +82,11 @@ In this case your environment variable should look like this
 
 If you use netlify it's actually easier, you will need to change in the file `astro.config.mjs` NetlifyCMS config `config.backend.name` to git-gateway. (See https://decapcms.org/docs/git-gateway-backend/#git-gateway-with-netlify for more info)
 
-## 🧞 Commands
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
+### 👀 Want to learn more?
 
 Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
 
-## Credit
+### Credit
 
 This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
