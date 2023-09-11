@@ -87,6 +87,18 @@ function ensureNetlifyCLI() {
 	}
 }
 
+function generateNetlifyToml(destination) {
+	const tomlContent = `
+[build]
+  publish = "public/"
+  command = "pnpm run build"
+`;
+
+	const tomlPath = path.join(destination, "netlify.toml");
+	fs.writeFileSync(tomlPath, tomlContent.trim() + "\n");
+	console.log(`Generated 'netlify.toml' at ${tomlPath}`);
+}
+
 function ensureGHCLI() {
 	if (!isCommandAvailable("gh --version")) {
 		console.warn("GitHub CLI (gh) is not installed but is required for certain operations.");
@@ -131,7 +143,7 @@ function pushToGitHub() {
 	}
 }
 
-function ensureConnectedToGitHub(destination) {
+async function ensureConnectedToGitHub(destination) {
 	// Check if the directory is a Git repo
 	if (!isGitRepo()) {
 		console.error("This directory is not a Git repository. Initializing it as one.");
@@ -141,16 +153,42 @@ function ensureConnectedToGitHub(destination) {
 	// Check if the repo is connected to GitHub
 	if (!isRepoConnectedToGitHub()) {
 		console.log("This repository is not connected to GitHub.");
-		ensureGHCLI(); // Ensure that GitHub CLI is installed
+
+		if (!isCommandAvailable("gh")) {
+			const choices = await inquirer.prompt([
+				{
+					type: "list",
+					name: "action",
+					message: "GitHub CLI (gh) is not installed but is required for certain operations. What would you like to do?",
+					choices: [
+						{ name: "Exit the CLI", value: "exit" },
+						{ name: "Continue without attaching the repo to GitHub", value: "continue" },
+					],
+				},
+			]);
+
+			if (choices.action === "exit") {
+				console.log("Exiting CLI. Please install GitHub CLI and run again.");
+				process.exit(0);
+			}
+			// If user chooses to continue, the function will just end and won't push changes to GitHub
+			return false;
+		}
+
+		// If GitHub CLI is installed, then continue with the process
 		createGitHubRepo(path.basename(destination)); // Create a new GitHub repo with the name of the destination directory
 		execSync("git add .", { stdio: "inherit" }); // Stage all files
 		execSync('git commit -m "Initial commit"', { stdio: "inherit" }); // Commit changes
 		pushToGitHub(); // Push changes to the new GitHub repo
+		return true;
 	}
+	return true; // This handles the case where the repo is already connected to GitHub
 }
 
-function deployToNetlify(destination) {
+async function deployToNetlify(destination) {
 	console.log("Deploying to Netlify...");
+
+	generateNetlifyToml(destination);
 
 	// Change directory to destination
 	process.chdir(destination);
@@ -164,18 +202,29 @@ function deployToNetlify(destination) {
 	ensureNetlifyCLI();
 
 	// Ensure the directory is connected to GitHub
-	ensureConnectedToGitHub(destination);
+	const isGitHubConnected = await ensureConnectedToGitHub(destination); // This function now might return a boolean value.
 
-	// Run the netlify init command to set up continuous deployment
-	try {
-		execSync("netlify init", { stdio: "inherit" });
-		console.log("Deployment to Netlify completed successfully.");
-	} catch (error) {
-		console.error("Failed to deploy to Netlify:", error.message);
+	// Check the GitHub connection status and decide the deployment strategy
+	if (isGitHubConnected) {
+		// Connected to GitHub, so setup continuous deployment
+		try {
+			execSync("netlify init", { stdio: "inherit" });
+			console.log("Continuous deployment to Netlify set up successfully.");
+		} catch (error) {
+			console.error("Failed to set up continuous deployment to Netlify:", error.message);
+		}
+	} else {
+		// Not connected to GitHub, do a manual deploy
+		try {
+			execSync("netlify deploy --prod", { stdio: "inherit" });
+			console.log("Deployment to Netlify completed successfully.");
+		} catch (error) {
+			console.error("Failed to deploy to Netlify:", error.message);
+		}
 	}
 }
 
-function deployToCloudflare(destination) {
+async function deployToCloudflare(destination) {
 	// Placeholder for Cloudflare Pages deployment logic.
 	console.warn("Cloudflare Pages deployment not implemented yet.");
 
@@ -185,11 +234,14 @@ function deployToCloudflare(destination) {
 
 async function main() {
 	try {
+		const currentDirName = path.basename(process.cwd());
+
 		const { packageName, destination, publishProject, publishProjectLocation } = await inquirer.prompt([
 			{
 				type: "input",
 				name: "packageName",
 				message: "How would you like to name your package?",
+				default: currentDirName,
 			},
 			{
 				type: "input",
@@ -200,7 +252,8 @@ async function main() {
 			{
 				type: "confirm",
 				name: "publishProject",
-				message: "Do you want to publish your project to netlify or cloudflare pages now?",
+				message:
+					"Do you want to publish your project to netlify or cloudflare pages now? (if n is chosen you can always do that later manually)",
 			},
 			{
 				type: "list",
@@ -244,10 +297,10 @@ async function main() {
 		if (publishProject) {
 			switch (publishProjectLocation) {
 				case "netlify":
-					deployToNetlify(destination);
+					await deployToNetlify(destination);
 					break;
 				case "cloudflare pages":
-					deployToCloudflare(destination);
+					await deployToCloudflare(destination);
 					break;
 				default:
 					console.error("Unknown deployment option:", publishProjectLocation);
