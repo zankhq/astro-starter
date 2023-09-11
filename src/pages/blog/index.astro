@@ -1,12 +1,9 @@
 ---
-import BaseHead from "@components/BaseHead.astro";
 import Layout from "@layouts/Layout.astro";
 import BlogHeader from "@components/blog/BlogHeader.astro";
-import Footer from "@components/Footer.astro";
-import { SITE_TITLE, SITE_DESCRIPTION, DEFAULT_LOCALE } from "../../consts";
+import { DEFAULT_LOCALE } from "@src/consts";
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
-import FormattedDate from "../../components/FormattedDate.astro";
 import { getLocale, getLocaleUrlPrefix } from "astro-i18n-aut";
 import Container from "@src/components/Container.astro";
 import HeroImage from "@src/components/blog/HeroImage.astro";
@@ -43,7 +40,7 @@ const posts = (await getCollection("blog", (entry) => entry.slug.startsWith(`${l
 									pubDate={post.data.pubDate}
 									name={`title-${post.data.title}`}
 									isSubheading={true}
-									class={`${index === 0 ? "text-6xl" : ""} text-black m-0`}>
+									class={`${index === 0 ? "text-6xl" : ""} m-0`}>
 									{post.data.title}
 								</BlogHeader>
 							</a>

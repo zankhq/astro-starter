@@ -1,5 +1,5 @@
 declare interface Locales {
-	title: string;
+	home_description: string;
 	subtitle: string;
 	globe_title: string;
 	main_button_text: string;

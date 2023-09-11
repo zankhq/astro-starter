@@ -4,6 +4,7 @@ import HeroImage from "@components/blog/HeroImage.astro";
 import Layout from "@layouts/Layout.astro";
 import FormattedDate from "@components/FormattedDate.astro";
 import Title from "@src/components/blog/BlogHeader.astro";
+import Comments from "@src/components/blog/Comments.astro";
 
 type Props = CollectionEntry<"blog">["data"];
 
@@ -15,12 +16,13 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props as P
 		<div class="w-full">
 			{heroImage && <HeroImage class="mx-auto block rounded-lg shadow-md" width={1020} height={510} src={heroImage} alt={title} />}
 		</div>
-		<div class="max-w-screen-md prose mx-auto px-4 text-gray-900 space-y-4">
+		<div class="max-w-screen-md prose mx-auto px-4 space-y-4">
 			<div class="text-center space-y-4">
 				<Title pubDate={pubDate} updatedDate={updatedDate} name={`title-${title}`} class="m-0 mb-2">{title}</Title>
 				<hr />
 			</div>
 			<slot />
+			<Comments />
 		</div>
 	</article>
 </Layout>
