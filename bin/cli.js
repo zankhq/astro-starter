@@ -1,5 +1,21 @@
 #!/usr/bin/env node
 
+/**
+ * This script is the entry point for the CLI tool of the Astro Starter project.
+ * It imports necessary modules, defines some constants, and provides utility functions
+ * for copying files, checking if a command is available, and interacting with the user.
+ * It also includes functions for ensuring that required tools like netlify-cli and gh are installed,
+ * generating a netlify.toml file, creating a GitHub repository, and pushing changes to GitHub.
+ *
+ * @requires fs
+ * @requires path
+ * @requires child_process.execSync
+ * @requires url.fileURLToPath
+ * @requires path.dirname
+ * @requires inquirer
+ * @exports None
+ */
+
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
@@ -13,13 +29,54 @@ const rootDir = path.join(__dirname, "..");
 
 const exclusions = ["node_modules", "bin", ".git", ".astro"]; // Add any additional directories you want to exclude here
 
+/**
+ * The selected package manager for the project.
+ * @type {"pnpm" | "npm" | "yarn"}
+ */
 let selectedPackageManager = "pnpm";
 
+/**
+ * Object containing commands for various package managers.
+ * @typedef {Object} PackageManagerCommands
+ * @property {Object} npm - Commands for npm package manager.
+ * @property {string} npm.install - Command to install packages using npm.
+ * @property {string} npm.run - Command to run scripts using npm.
+ * @property {string} npm.build - Command to build project using npm.
+ * @property {string} npm.dev - Command to run development server using npm.
+ * @property {string} npm.list - Command to list installed packages using npm.
+ * @property {string} npm.globalAdd - Command to install packages globally using npm.
+ * @property {string} npm.globalList - Command to list globally installed packages using npm.
+ * @property {string} npm.remove - Command to remove packages using npm.
+ * @property {Object} pnpm - Commands for pnpm package manager.
+ * @property {string} pnpm.install - Command to install packages using pnpm.
+ * @property {string} pnpm.run - Command to run scripts using pnpm.
+ * @property {string} pnpm.build - Command to build project using pnpm.
+ * @property {string} pnpm.dev - Command to run development server using pnpm.
+ * @property {string} pnpm.list - Command to list installed packages using pnpm.
+ * @property {string} pnpm.globalAdd - Command to install packages globally using pnpm.
+ * @property {string} pnpm.globalList - Command to list globally installed packages using pnpm.
+ * @property {string} pnpm.remove - Command to remove packages using pnpm.
+ * @property {Object} yarn - Commands for yarn package manager.
+ * @property {string} yarn.install - Command to install packages using yarn.
+ * @property {string} yarn.run - Command to run scripts using yarn.
+ * @property {string} yarn.build - Command to build project using yarn.
+ * @property {string} yarn.dev - Command to run development server using yarn.
+ * @property {string} yarn.list - Command to list installed packages using yarn.
+ * @property {string} yarn.globalAdd - Command to install packages globally using yarn.
+ * @property {string} yarn.globalList - Command to list globally installed packages using yarn.
+ * @property {string} yarn.remove - Command to remove packages using yarn.
+ */
+
+/**
+ * Object containing package manager commands for npm, pnpm, and yarn.
+ * @type {PackageManagerCommands}
+ */
 const packageManagerCommands = {
 	npm: {
 		install: "npm install",
 		run: "npm run",
 		build: "npm run build",
+		dev: "npm run dev",
 		list: "npm list",
 		globalAdd: "npm install -g",
 		globalList: "npm list -g",
@@ -29,6 +86,7 @@ const packageManagerCommands = {
 		install: "pnpm install",
 		run: "pnpm run",
 		build: "pnpm run build",
+		dev: "pnpm run dev",
 		list: "pnpm list",
 		globalAdd: "pnpm add -g",
 		globalList: "pnpm list -g",
@@ -38,6 +96,7 @@ const packageManagerCommands = {
 		install: "yarn",
 		run: "yarn",
 		build: "yarn build",
+		dev: "yarn dev",
 		list: "yarn list",
 		globalAdd: "yarn global add",
 		globalList: "yarn global list",
@@ -45,13 +104,46 @@ const packageManagerCommands = {
 	},
 };
 
-function uninstallInquirer() {
-	console.log("Uninstalling inquirer...");
-	execSync(`${packageManagerCommands[selectedPackageManager].remove} inquirer`, {
-		stdio: "inherit",
-	});
+/**
+ * Logs a message to the console.
+ *
+ * @param {string} message - The message to log.
+ */
+function log(message) {
+	console.log(message);
 }
 
+/**
+ * Logs an error message to the console.
+ *
+ * @param {string} message - The error message to log.
+ */
+function error(message) {
+	console.error(message);
+}
+
+/**
+ * Uninstalls the inquirer package using the selected package manager.
+ */
+/**
+ * Uninstalls the "inquirer" package from the specified destination directory, if it is installed.
+ * @param {string} destination - The path to the directory where the package should be uninstalled from.
+ */
+function uninstallInquirer(destination) {
+	if (isPackageInstalled("inquirer", destination)) {
+		console.log("Uninstalling inquirer...");
+		execSync(`${packageManagerCommands[selectedPackageManager].remove} inquirer`, {
+			stdio: "inherit",
+			cwd: destination,
+		});
+	}
+}
+
+/**
+ * Deletes a directory and all its contents recursively.
+ *
+ * @param {string} directoryPath - The path of the directory to delete.
+ */
 function deleteDirectoryRecursive(directoryPath) {
 	if (fs.existsSync(directoryPath)) {
 		fs.readdirSync(directoryPath).forEach((file, index) => {
@@ -68,6 +160,12 @@ function deleteDirectoryRecursive(directoryPath) {
 	}
 }
 
+/**
+ * Checks if a command is available in the system.
+ *
+ * @param {string} command - The command to check.
+ * @returns {boolean} - True if the command is available, false otherwise.
+ */
 function isCommandAvailable(command) {
 	try {
 		execSync(command, { stdio: "ignore" });
@@ -77,27 +175,60 @@ function isCommandAvailable(command) {
 	}
 }
 
-function copyRecursive(src, dest) {
-	const exists = fs.existsSync(src);
-	const stats = exists && fs.statSync(src);
-	const isDirectory = exists && stats.isDirectory();
-	const isExcluded = exclusions.includes(path.basename(src));
-
-	if (isExcluded) return;
-
-	if (isDirectory) {
-		if (!fs.existsSync(dest)) {
-			fs.mkdirSync(dest);
-		}
-
-		fs.readdirSync(src).forEach((child) => {
-			copyRecursive(path.join(src, child), path.join(dest, child));
+/**
+ * Checks if a package is installed using pnpm.
+ * @param {string} packageName - The name of the package to check.
+ * @param {string} destination - The directory where the project is located.
+ * @returns {boolean} - True if the package is installed, false otherwise.
+ */
+function isPackageInstalled(packageName, destination) {
+	try {
+		const output = execSync(`${packageManagerCommands[selectedPackageManager].list}`, {
+			stdio: "pipe",
+			encoding: "utf-8",
+			cwd: destination,
 		});
-	} else {
-		fs.copyFileSync(src, dest);
+		return output.includes(packageName);
+	} catch (error) {
+		console.error(`Failed to check if ${packageName} is installed:`, error.message);
+		return false;
 	}
 }
 
+/**
+ * Copies a file or directory recursively from the source path to the destination path.
+ *
+ * @param {string} src - The source path.
+ * @param {string} dest - The destination path.
+ */
+async function copyRecursive(src, dest) {
+	try {
+		const stats = await fs.stat(src);
+		const isDirectory = stats.isDirectory();
+		const isExcluded = exclusions.includes(path.basename(src));
+
+		if (isExcluded) return;
+
+		if (isDirectory) {
+			await fs.mkdir(dest, { recursive: true });
+
+			const children = await fs.readdir(src);
+			for (const child of children) {
+				await copyRecursive(path.join(src, child), path.join(dest, child));
+			}
+		} else {
+			await fs.copyFile(src, dest);
+		}
+	} catch (err) {
+		error(`Error copying from ${src} to ${dest}: ${err.message}`);
+	}
+}
+
+/**
+ * Gets the name of the current Git user.
+ *
+ * @returns {string} - The name of the current Git user.
+ */
 function getGitAuthorName() {
 	try {
 		const name = execSync("git config user.name", { encoding: "utf8" }).trim();
@@ -108,10 +239,13 @@ function getGitAuthorName() {
 	}
 }
 
+/**
+ * Ensures that the netlify-cli package is installed using the selected package manager.
+ */
 function ensureNetlifyCLI() {
 	// We assume that if `pnpm list -g netlify-cli` command doesn't throw an error, then netlify-cli is installed.
 	if (!isCommandAvailable(`${packageManagerCommands[selectedPackageManager].list} -g netlify-cli`)) {
-		console.log("netlify-cli is not installed. Installing using pnpm...");
+		console.log(`netlify-cli is not installed. Installing using ${selectedPackageManager}...`);
 		execSync(`${packageManagerCommands[selectedPackageManager].globalAdd} netlify-cli`, { stdio: "inherit" });
 		console.log("netlify-cli installed successfully.");
 	} else {
@@ -119,6 +253,11 @@ function ensureNetlifyCLI() {
 	}
 }
 
+/**
+ * Generates a netlify.toml file at the specified destination path.
+ *
+ * @param {string} destination - The path where the netlify.toml file should be generated.
+ */
 function generateNetlifyToml(destination) {
 	const tomlContent = `
 [build]
@@ -132,6 +271,9 @@ function generateNetlifyToml(destination) {
 	console.log(`Generated 'netlify.toml' at ${tomlPath}`);
 }
 
+/**
+ * Ensures that the GitHub CLI (gh) is installed.
+ */
 function ensureGHCLI() {
 	if (!isCommandAvailable("gh --version")) {
 		console.warn("GitHub CLI (gh) is not installed but is required for certain operations.");
@@ -142,6 +284,11 @@ function ensureGHCLI() {
 	}
 }
 
+/**
+ * Checks if the current directory is a Git repository.
+ *
+ * @returns {boolean} - True if the current directory is a Git repository, false otherwise.
+ */
 function isGitRepo() {
 	try {
 		execSync("git status", { stdio: "ignore" });
@@ -151,6 +298,11 @@ function isGitRepo() {
 	}
 }
 
+/**
+ * Creates a new GitHub repository with the specified name.
+ *
+ * @param {string} repoName - The name of the new repository.
+ */
 function createGitHubRepo(repoName) {
 	try {
 		execSync(`gh repo create ${repoName} --confirm`, { stdio: "inherit" });
@@ -159,18 +311,34 @@ function createGitHubRepo(repoName) {
 	}
 }
 
-function isRepoConnectedToGitHub() {
+/**
+ * Checks if the current Git repository is connected to GitHub.
+ *
+ * @returns {boolean} - True if the current Git repository is connected to GitHub, false otherwise.
+ */
+function isRepoConnectedToGitHub(destination) {
 	try {
-		const remoteURL = execSync("git config --get remote.origin.url", { encoding: "utf8" }).trim();
+		const remoteURL = execSync("git config --get remote.origin.url", { encoding: "utf8", cwd: destination }).trim();
 		return remoteURL.includes("github.com");
 	} catch (error) {
 		return false;
 	}
 }
 
-async function pushToGitHub() {
+/**
+ * Pushes changes to GitHub.
+ * @returns {Promise<boolean>} Returns a promise that resolves to a boolean value indicating whether the push was successful or not.
+ */
+/**
+ * Pushes changes to GitHub.
+ * @async
+ * @function pushToGitHub
+ * @param {string} destination - The path to the directory where the changes are located.
+ * @returns {Promise<boolean>} - A promise that resolves to true if the changes were pushed successfully, or false if the user chose to continue despite the push failure.
+ */
+async function pushToGitHub(destination) {
 	try {
-		execSync("git push -u origin main", { stdio: "inherit" }); // assuming you're pushing the main branch
+		execSync("git push -u origin main", { stdio: "inherit", cwd: destination }); // assuming you're pushing the main branch
 	} catch (error) {
 		console.error("Failed to push to GitHub:", error.message);
 
@@ -194,15 +362,22 @@ async function pushToGitHub() {
 	return true;
 }
 
+/**
+ * Ensures that the current Git repository is connected to GitHub. If not, it will create a new GitHub repository and push all local changes to it.
+ * @async
+ * @function ensureConnectedToGitHub
+ * @param {string} destination - The destination directory.
+ * @returns {boolean} - Returns true if the local changes were successfully pushed to the new GitHub repository, false otherwise.
+ */
 async function ensureConnectedToGitHub(destination) {
 	// Check if the directory is a Git repo
 	if (!isGitRepo()) {
 		console.error("This directory is not a Git repository. Initializing it as one.");
-		execSync("git init", { stdio: "inherit" });
+		execSync("git init", { stdio: "inherit", cwd: destination });
 	}
 
 	// Check if the repo is connected to GitHub
-	if (!isRepoConnectedToGitHub()) {
+	if (!isRepoConnectedToGitHub(destination)) {
 		console.log("This repository is not connected to GitHub.");
 
 		if (!isCommandAvailable("gh")) {
@@ -231,20 +406,22 @@ async function ensureConnectedToGitHub(destination) {
 	}
 
 	console.log("Pushing all local changes to github.");
-	execSync("git add .", { stdio: "inherit" }); // Stage all files
-	execSync('git commit -m "Initial commit" --allow-empty', { stdio: "inherit" }); // Commit changes
-	var success = await pushToGitHub(); // Push changes to the new GitHub repo
+	execSync("git add .", { stdio: "inherit", cwd: destination }); // Stage all files
+	execSync('git commit -m "Initial commit" --allow-empty', { stdio: "inherit", cwd: destination }); // Commit changes
+	var success = await pushToGitHub(destination); // Push changes to the new GitHub repo
 
 	return success; // This handles the case where the repo is already connected to GitHub
 }
 
+/**
+ * Deploys the project to Netlify.
+ * @param {string} destination - The path to the directory where the project will be deployed.
+ * @returns {void}
+ */
 async function deployToNetlify(destination) {
 	console.log("Deploying to Netlify...");
 
 	generateNetlifyToml(destination);
-
-	// Change directory to destination
-	process.chdir(destination);
 
 	// Remove the functions folder
 	const functionsDir = path.join(destination, "functions");
@@ -258,10 +435,12 @@ async function deployToNetlify(destination) {
 	const isGitHubConnected = await ensureConnectedToGitHub(destination); // This function now might return a boolean value.
 
 	// Check the GitHub connection status and decide the deployment strategy
+	console.log(`Starting netlify deployment, it could take some seconds.`);
+
 	if (isGitHubConnected) {
 		// Connected to GitHub, so setup continuous deployment
 		try {
-			execSync("netlify init", { stdio: "inherit" });
+			execSync("netlify init", { stdio: "inherit", cwd: destination });
 			console.log("Continuous deployment to Netlify set up successfully.");
 		} catch (error) {
 			console.error("Failed to set up continuous deployment to Netlify:", error.message);
@@ -269,7 +448,7 @@ async function deployToNetlify(destination) {
 	} else {
 		// Not connected to GitHub, do a manual deploy
 		try {
-			execSync("netlify deploy --prod", { stdio: "inherit" });
+			execSync("netlify deploy --prod", { stdio: "inherit", cwd: destination });
 			console.log("Deployment to Netlify completed successfully.");
 		} catch (error) {
 			console.error("Failed to deploy to Netlify:", error.message);
@@ -277,6 +456,11 @@ async function deployToNetlify(destination) {
 	}
 }
 
+/**
+ * Deploys the project to Cloudflare Pages.
+ * @param {string} destination - The directory path of the project to be deployed.
+ * @returns {Promise<void>} - A Promise that resolves when the deployment is complete.
+ */
 async function deployToCloudflare(destination) {
 	// Placeholder for Cloudflare Pages deployment logic.
 	console.warn("Cloudflare Pages deployment not implemented yet.");
@@ -285,6 +469,93 @@ async function deployToCloudflare(destination) {
 	// ensureConnectedToGitHub(destination);
 }
 
+/**
+ * Checks if the given package manager is installed.
+ * @param {string} packageManager - The package manager to check for (e.g., "npm", "pnpm", "yarn").
+ * @returns {boolean} - Returns true if the package manager is installed, otherwise false.
+ */
+function isPackageManagerInstalled(packageManager) {
+	try {
+		// The '--version' flag is common among the three package managers to get the installed version
+		execSync(`${packageManager} --version`, { stdio: "ignore" });
+		return true;
+	} catch (error) {
+		return false;
+	}
+}
+
+/**
+ * Checks if the given package manager is installed.
+ * If not, tries to install it.
+ * @param {string} packageManager - The package manager to check for (e.g., "npm", "pnpm", "yarn").
+ */
+function ensurePackageManagerInstalled(packageManager) {
+	const installers = {
+		npm: "https://www.npmjs.com/get-npm",
+		pnpm: "npm install -g pnpm",
+		yarn: "npm install -g yarn",
+	};
+
+	if (!isPackageManagerInstalled(packageManager)) {
+		log(`The selected package manager '${packageManager}' is not installed. Attempting to install...`);
+
+		if (packageManager === "npm") {
+			error(`Please install npm manually from ${installers.npm} and then rerun the script.`);
+			return;
+		}
+
+		try {
+			execSync(installers[packageManager], { stdio: "inherit" });
+			console.log(`${packageManager} has been installed successfully.`);
+		} catch (error) {
+			console.error(`Failed to install ${packageManager}. Please install it manually and rerun the script.`);
+		}
+	}
+}
+
+function displayWelcomeMessage(publishProject, publishProjectLocation) {
+	log("\n");
+	log("==================================");
+	log("=  PROJECT SUCCESSFULLY CREATED  =");
+	log("==================================");
+	log("\nYour project has been successfully initialized!\n");
+	log("Here are some helpful commands to get you started:");
+	log(`\n1. [Run the project]: ${packageManagerCommands[selectedPackageManager].dev}`);
+
+	if (publishProject && publishProjectLocation) {
+		switch (publishProjectLocation) {
+			case "netlify":
+				log(`2. [Open Netlify site]: netlify open`);
+				break;
+			case "cloudflare pages":
+				log(`2. [Open Cloudflare Pages site]: `);
+				break;
+			default:
+				log(`2. [Deployment] For netlify or cloudflare pages deployment check:`);
+				log(`	Netlify: https://docs.astro.build/en/guides/deploy/netlify`);
+				log(`	Cloudflare pages: https://docs.astro.build/en/guides/deploy/cloudflare`);
+		}
+	} else {
+		log(`2. [Deployment] For netlify or cloudflare pages deployment check:`);
+		log(`	Netlify: https://docs.astro.build/en/guides/deploy/netlify`);
+		log(`	Cloudflare pages: https://docs.astro.build/en/guides/deploy/cloudflare`);
+	}
+
+	log("3. [Astro docs]: https://docs.astro.build");
+	log("4. [Template doc]: https://github.com/zankhq/astro-starter");
+	log("\nHappy coding! 🚀\n");
+	log("==================================");
+	log("\n");
+}
+
+/**
+ * Initializes a new project by prompting the user for project details, copying files from the root directory to the destination,
+ * updating package.json with the new name and author, installing packages, and optionally deploying the project to Netlify or Cloudflare Pages.
+ * @async
+ * @function main
+ * @returns {Promise<void>} A Promise that resolves when the project initialization is complete.
+ * @throws {Error} If there is an error creating the project.
+ */
 async function main() {
 	try {
 		const currentDirName = path.basename(process.cwd());
@@ -329,6 +600,8 @@ async function main() {
 
 		selectedPackageManager = packageManager;
 
+		ensurePackageManagerInstalled(selectedPackageManager);
+
 		if (!fs.existsSync(destination)) {
 			fs.mkdirSync(destination, { recursive: true });
 		} else if (fs.readdirSync(destination).filter((file) => file !== ".git").length > 0) {
@@ -345,10 +618,26 @@ async function main() {
 				console.log("Aborted. Exiting...");
 				return;
 			}
+
+			// If user confirms, proceed to remove any lock file and node_modules folder
+			const lockFiles = ["package-lock.json", "yarn.lock", "pnpm-lock.yaml"];
+			for (const lockFile of lockFiles) {
+				const lockFilePath = path.join(destination, lockFile);
+				if (fs.existsSync(lockFilePath)) {
+					fs.unlinkSync(lockFilePath);
+					console.log(`Removed ${lockFile}`);
+				}
+			}
+
+			const nodeModulesPath = path.join(destination, "node_modules");
+			if (fs.existsSync(nodeModulesPath)) {
+				fs.rmdirSync(nodeModulesPath, { recursive: true });
+				console.log(`Removed node_modules`);
+			}
 		}
 
 		// Copy all files and subdirectories from the root directory to the destination
-		copyRecursive(rootDir, destination);
+		await copyRecursive(rootDir, destination);
 
 		// Update package.json with the new name and author
 		const packageJsonPath = path.join(destination, "package.json");
@@ -381,27 +670,35 @@ async function main() {
 			}
 		}
 
-		console.log(`Starting packages intallation ${destination}`);
-		execSync(`cd ${destination} && ${packageManagerCommands[selectedPackageManager].install}`, { stdio: "inherit" });
+		console.log(`Starting packages installation ${destination}`);
+		execSync(`${packageManagerCommands[selectedPackageManager].install}`, { stdio: "inherit", cwd: destination });
 		console.log(`Packages installed successfully in ${destination}`);
+
+		displayWelcomeMessage(publishProject, publishProjectLocation);
+
+		uninstallInquirer(destination);
 
 		// Ask the user if they want to run the project, but only after the publishing step.
 		const { runProject: shouldRunProject } = await inquirer.prompt([
 			{
 				type: "confirm",
 				name: "runProject",
-				message: "Do you want to run the project locally?",
+				message: `Do you want to run the project locally? (${packageManagerCommands[selectedPackageManager].dev})`,
 				default: true,
 			},
 		]);
 
-		uninstallInquirer();
-
 		// Ask user ro run the project or not
 		if (shouldRunProject) {
-			execSync(`cd ${destination} && ${packageManagerCommands[selectedPackageManager].dev}`, { stdio: "inherit" });
+			execSync(`${packageManagerCommands[selectedPackageManager].dev}`, { stdio: "inherit", cwd: destination });
 		} else if (publishProject) {
-			console.log(`You can run '${packageManagerCommands[selectedPackageManager].dev}' in ${destination} whenever you're ready.`);
+			log(`You can run '${packageManagerCommands[selectedPackageManager].dev}' in ${destination} whenever you're ready.`);
+			log(`🎉 Congratulations! Your project is set up and ready to go! 🎉`);
+			log(`Next steps:`);
+			log(`1. Dive into the code in ${destination} to start building.`);
+			log(`2. Check the documentation or README for more detailed instructions.`);
+			log(`3. If you have any issues or questions, don't hesitate to consult the community forums or support.`);
+			log(`Happy coding! 💻`);
 		}
 
 		// Once everything is done, uninstall inquirer
