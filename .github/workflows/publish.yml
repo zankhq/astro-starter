@@ -56,5 +56,8 @@ jobs:
                   node-version: 18.x
             - name: "Install pnpm"
               run: npm install -g pnpm
+            - name: Setup .npmrc file to authenticate with npm
+              run: |
+                  echo "//registry.npmjs.org/:_authToken=${{ env.NPM_TOKEN }}" > .npmrc
             - name: "Publish package if needed"
               run: npx can-npm-publish --verbose && pnpm publish || echo "Does not publish"
