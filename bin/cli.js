@@ -39,7 +39,7 @@ function copyRecursive(src, dest) {
 	}
 }
 
-rl.question("Where would you like to create the new project? (Provide a directory path) ", (destination) => {
+rl.question('Where would you like to create the new project? (Provide a directory path, use "." for current directory)', (destination) => {
 	rl.question("Do you want to install the packages now? (y/n) ", (answer) => {
 		rl.close();
 
@@ -54,17 +54,29 @@ rl.question("Where would you like to create the new project? (Provide a director
 			// Copy all files and subdirectories from the root directory to the destination, excluding the specified ones
 			copyRecursive(rootDir, destination);
 
-
 			console.log(`Project initialized in ${destination}`);
 
 			// Check user's answer and run pnpm install if confirmed
-			if (answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes') {
+			if (answer.toLowerCase() === "y" || answer.toLowerCase() === "yes") {
 				execSync(`cd ${destination} && pnpm install`, { stdio: "inherit" });
 				console.log(`Packages installed successfully in ${destination}`);
+
+				rl.question("Do you want to run the project now? (y/n) ", (answer) => {
+					rl.close();
+
+					try {
+						if (answer.toLowerCase() === "y" || answer.toLowerCase() === "yes") {
+							execSync(`cd ${destination} && pnpm dev`, { stdio: "inherit" });
+						} else {
+							console.log(`You can run 'pnpm dev' in ${destination} whenever you're ready.`);
+						}
+					} catch (error) {
+						console.error("Failed to run the project:", error.message);
+					}
+				});
 			} else {
 				console.log(`You can run 'pnpm install' in ${destination} whenever you're ready.`);
 			}
-
 		} catch (error) {
 			console.error("Failed to create the project:", error.message);
 		}
