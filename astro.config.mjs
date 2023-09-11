@@ -10,6 +10,11 @@ import { DEFAULT_LOCALE, LOCALES, SITE_URL } from "./src/consts";
 const defaultLocale = DEFAULT_LOCALE;
 const locales = LOCALES;
 
+let netlifyCMSBackendConfig = {
+	name: "git-gateway",
+	branch: "main",
+};
+
 // https://astro.build/config
 export default defineConfig({
 	site: SITE_URL,
@@ -36,10 +41,7 @@ export default defineConfig({
 		NetlifyCMS({
 			config: {
 				local_backend: true,
-				backend: {
-					name: "git-gateway",
-					branch: "main",
-				},
+				backend: netlifyCMSBackendConfig, // Change here if you don't use neither cloudflare pages nor netlify
 				media_folder: "public/images",
 				public_folder: "/images",
 				i18n: {
