@@ -1,7 +1,7 @@
 {
 	"name": "create-astro-starter",
 	"type": "module",
-	"version": "0.0.6",
+	"version": "0.0.8",
 	"author": "Giulio Zanchetta",
 	"license": "MIT",
 	"repository": {
@@ -14,6 +14,7 @@
 	"bin": {
 		"create-astro-starter": "./bin/cli.js"
 	},
+	"files": ["*"],
 	"scripts": {
 		"dev": "astro dev",
 		"start": "astro dev",

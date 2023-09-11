@@ -40,21 +40,33 @@ function copyRecursive(src, dest) {
 }
 
 rl.question("Where would you like to create the new project? (Provide a directory path) ", (destination) => {
-	rl.close();
+	rl.question("Do you want to install the packages now? (y/n) ", (answer) => {
+		rl.close();
 
-	try {
-		if (!fs.existsSync(destination)) {
-			fs.mkdirSync(destination, { recursive: true });
+		try {
+			if (!fs.existsSync(destination)) {
+				fs.mkdirSync(destination, { recursive: true });
+			}
+
+			// Initialize the package with npm
+			execSync(`cd ${destination} && npm init -y`, { stdio: "inherit" });
+
+			// Copy all files and subdirectories from the root directory to the destination, excluding the specified ones
+			copyRecursive(rootDir, destination);
+
+
+			console.log(`Project initialized in ${destination}`);
+
+			// Check user's answer and run pnpm install if confirmed
+			if (answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes') {
+				execSync(`cd ${destination} && pnpm install`, { stdio: "inherit" });
+				console.log(`Packages installed successfully in ${destination}`);
+			} else {
+				console.log(`You can run 'pnpm install' in ${destination} whenever you're ready.`);
+			}
+
+		} catch (error) {
+			console.error("Failed to create the project:", error.message);
 		}
-
-		// Initialize the package with npm
-		execSync(`cd ${destination} && npm init -y`, { stdio: "inherit" });
-
-		// Copy all files and subdirectories from the root directory to the destination, excluding the specified ones
-		copyRecursive(rootDir, destination);
-
-		console.log(`Project initialized in ${destination}`);
-	} catch (error) {
-		console.error("Failed to create the project:", error.message);
-	}
+	});
 });
