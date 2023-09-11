@@ -34,6 +34,10 @@ All commands are run from the root of the project, from a terminal:
 
 If you want to switch to npm make sure to remove pnpm-lock.yaml and node_modules folder and then run `npm install`
 
+### How to add PWA
+
+TBD
+
 ### 🚀 Project Structure
 
 Inside of your Astro project, you'll see the following folders and files:
