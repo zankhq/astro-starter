@@ -159,7 +159,7 @@ async function deleteDirectoryRecursive(directoryPath) {
 	if (await exists(directoryPath)) {
 		(await fs.readdir(directoryPath)).forEach(async (file, index) => {
 			const curPath = path.join(directoryPath, file);
-			if (await fs.lstat(curPath).isDirectory()) {
+			if ((await fs.lstat(curPath)).isDirectory()) {
 				// Recursive delete if it's a directory
 				await deleteDirectoryRecursive(curPath);
 			} else {
