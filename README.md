@@ -56,7 +56,7 @@ Any static assets, like images, can be placed in the `public/` directory.
 
 ## ✍️ Admin dashboard
 
-You can access the admin dashboard for editing blog post at `/admin` (https://astros.zank.studio/admin)
+You can access the admin dashboard for editing blog post at `/admin` (https://example.com/admin)
 
 For more information follow Decap CMS documentation at https://decapcms.org/docs/
 
