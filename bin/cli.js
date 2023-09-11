@@ -2,13 +2,14 @@ import readline from "readline";
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
+import { fileURLToPath } from "url";
 
 const rl = readline.createInterface({
 	input: process.stdin,
 	output: process.stdout,
 });
 
-const rootDir = path.dirname(require.main.filename);
+const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
 const exclusions = ["node_modules", "bin"]; // Add any additional directories you want to exclude here
 
