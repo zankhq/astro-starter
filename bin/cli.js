@@ -410,7 +410,7 @@ async function pushToGitHub(destination) {
  * @param {string} destination - The destination directory.
  * @returns {boolean} - Returns true if the local changes were successfully pushed to the new GitHub repository, false otherwise.
  */
-async function ensureConnectedToGitHub(destination) {
+async function ensureConnectedToGitHub(packageName, destination) {
 	// Check if the directory is a Git repo
 	if (!isGitRepo()) {
 		console.error("This directory is not a Git repository. Initializing it as one.");
@@ -443,7 +443,7 @@ async function ensureConnectedToGitHub(destination) {
 		}
 
 		// If GitHub CLI is installed, then continue with the process
-		createGitHubRepo(path.basename(destination)); // Create a new GitHub repo with the name of the destination directory
+		createGitHubRepo(packageName); // Create a new GitHub repo with the name of the destination directory
 	}
 
 	console.log("Pushing all local changes to github.");
@@ -459,7 +459,7 @@ async function ensureConnectedToGitHub(destination) {
  * @param {string} destination - The path to the directory where the project will be deployed.
  * @returns {void}
  */
-async function deployToNetlify(destination) {
+async function deployToNetlify(packageName, destination) {
 	console.log("Deploying to Netlify...");
 
 	await generateNetlifyToml(destination);
@@ -473,7 +473,7 @@ async function deployToNetlify(destination) {
 	ensureNetlifyCLI();
 
 	// Ensure the directory is connected to GitHub
-	const isGitHubConnected = await ensureConnectedToGitHub(destination); // This function now might return a boolean value.
+	const isGitHubConnected = await ensureConnectedToGitHub(packageName, destination); // This function now might return a boolean value.
 
 	// Check the GitHub connection status and decide the deployment strategy
 	console.log(`Starting netlify deployment, it could take some seconds.`);
@@ -525,7 +525,7 @@ async function deployToCloudflare(packageName, destination) {
 	ensureWranglerCLI();
 
 	// Ensure the directory is connected to GitHub
-	const isGitHubConnected = await ensureConnectedToGitHub(destination); // This function now might return a boolean value.
+	const isGitHubConnected = await ensureConnectedToGitHub(packageName, destination); // This function now might return a boolean value.
 
 	// Check the GitHub connection status and decide the deployment strategy
 	console.log(`Starting cloudflare pages deployment, it could take some seconds.`);
@@ -748,7 +748,7 @@ async function main() {
 		if (publishProject) {
 			switch (publishProjectLocation) {
 				case "netlify":
-					await deployToNetlify(destination);
+					await deployToNetlify(packageName, destination);
 					break;
 				case "cloudflare pages":
 					await deployToCloudflare(packageName, destination);
