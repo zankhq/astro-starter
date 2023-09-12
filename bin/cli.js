@@ -265,6 +265,49 @@ function getGitAuthorName() {
 }
 
 /**
+ * Returns the GitHub username of the user who executed the command.
+ * If the username cannot be retrieved, it returns a default value.
+ *
+ * @returns {string} The GitHub username or a default value.
+ */
+async function getGitHubUsername() {
+	try {
+		const output = execSync("gh api user", { encoding: "utf-8" });
+		const data = JSON.parse(output);
+		return data.login;
+	} catch (error) {
+		console.error("Failed to retrieve GitHub username. It's likely you're not authenticated with the GitHub CLI.");
+
+		const { action } = await inquirer.prompt([
+			{
+				type: "list",
+				name: "action",
+				message: "You are not authenticated with the GitHub CLI. What would you like to do?",
+				choices: [
+					{ name: "Authenticate now", value: "authenticate" },
+					{ name: "Continue without authenticating", value: "continue" },
+				],
+			},
+		]);
+
+		if (action === "authenticate") {
+			try {
+				execSync("gh auth login", { stdio: "inherit" }); // This will open the interactive gh login process
+				const output = execSync("gh api user", { encoding: "utf-8" });
+				const data = JSON.parse(output);
+				return data.login;
+			} catch (loginError) {
+				console.error("Failed to authenticate with GitHub CLI:", loginError.message);
+				return null;
+			}
+		} else {
+			console.warn("Continuing without GitHub CLI authentication.");
+			return null;
+		}
+	}
+}
+
+/**
  * Ensures that the netlify-cli package is installed using the selected package manager.
  */
 function ensureNetlifyCLI() {
@@ -344,11 +387,13 @@ function isGitRepo() {
  *
  * @param {string} repoName - The name of the new repository.
  */
-function createGitHubRepo(repoName) {
+function createGitHubRepo(packageName) {
 	try {
-		execSync(`gh repo create ${repoName} --confirm`, { stdio: "inherit" });
+		console.log(`Creating the public repo ${packageName} on GitHub...`);
+		execSync(`gh repo create ${packageName} --public`, { stdio: "inherit" });
 	} catch (error) {
 		console.error("Failed to create the repo:", error.message);
+		throw error; // This will propagate the error to the calling function
 	}
 }
 
@@ -368,35 +413,41 @@ function isRepoConnectedToGitHub(destination) {
 
 /**
  * Pushes changes to GitHub.
- * @returns {Promise<boolean>} Returns a promise that resolves to a boolean value indicating whether the push was successful or not.
- */
-/**
- * Pushes changes to GitHub.
  * @async
  * @function pushToGitHub
  * @param {string} destination - The path to the directory where the changes are located.
  * @returns {Promise<boolean>} - A promise that resolves to true if the changes were pushed successfully, or false if the user chose to continue despite the push failure.
  */
-async function pushToGitHub(destination) {
+async function pushToGitHub(packageName, destination) {
 	try {
-		execSync("git push -u origin main", { stdio: "inherit", cwd: destination }); // assuming you're pushing the main branch
+		execSync("git push -u origin main", { stdio: "inherit", cwd: destination });
 	} catch (error) {
 		console.error("Failed to push to GitHub:", error.message);
 
-		const { confirmContinue } = await inquirer.prompt([
-			{
-				type: "confirm",
-				name: "confirmContinue",
-				message: `Failed to push changes to github, do you want to continue anyway?`,
-				default: false,
-			},
-		]);
+		try {
+			// Create the GitHub repository
+			createGitHubRepo(packageName);
 
-		if (!confirmContinue) {
-			console.log("Aborted. Exiting...");
-			process.exit(1); // Terminate the program.
-		} else {
-			return false;
+			// Retry the push
+			execSync("git push -u origin main", { stdio: "inherit", cwd: destination });
+		} catch (repoError) {
+			console.error("Failed to create repository and push:", repoError.message);
+
+			const { confirmContinue } = await inquirer.prompt([
+				{
+					type: "confirm",
+					name: "confirmContinue",
+					message: `Failed to push changes to github, do you want to continue anyway?`,
+					default: false,
+				},
+			]);
+
+			if (!confirmContinue) {
+				console.log("Aborted. Exiting...");
+				process.exit(1);
+			} else {
+				return false;
+			}
 		}
 	}
 
@@ -449,7 +500,19 @@ async function ensureConnectedToGitHub(packageName, destination) {
 	console.log("Pushing all local changes to github.");
 	execSync("git add .", { stdio: "inherit", cwd: destination }); // Stage all files
 	execSync('git commit -m "Initial commit" --allow-empty', { stdio: "inherit", cwd: destination }); // Commit changes
-	var success = await pushToGitHub(destination); // Push changes to the new GitHub repo
+
+	const username = await getGitHubUsername();
+
+	try {
+		console.log("Searching for the origin repo.");
+		execSync("git remote get-url origin", { stdio: "inherit", cwd: destination });
+	} catch (error) {
+		// If getting the remote URL fails, it likely means the remote isn't set up.
+		console.log(`Adding the origin repo. to https://github.com/${username}/${packageName}.git`);
+		execSync(`git remote add origin https://github.com/${username}/${packageName}.git`, { stdio: "inherit", cwd: destination });
+	}
+
+	var success = await pushToGitHub(packageName, destination); // Push changes to the new GitHub repo
 
 	return success; // This handles the case where the repo is already connected to GitHub
 }
@@ -501,15 +564,15 @@ async function deployToNetlify(packageName, destination) {
 		}
 	}
 
-	// Update HOSTING_SERVICE value in the src/const.ts file
-	const constsFilePath = path.join(destination, "src", "const.ts");
+	// Update HOSTING_SERVICE value in the src/consts.ts file
+	const constsFilePath = path.join(destination, "src", "consts.ts");
 	const content = await fs.readFile(constsFilePath, "utf8");
 	const updatedContent = content.replace(
 		/export const HOSTING_SERVICE: "cloudflare" \| "netlify" \| "none" = "[^"]+";/,
 		`export const HOSTING_SERVICE: "cloudflare" | "netlify" | "none" = "netlify";`,
 	);
 	await fs.writeFile(constsFilePath, updatedContent, "utf8");
-	console.log("Updated HOSTING_SERVICE value to 'netlify' in src/const.ts");
+	console.log("Updated HOSTING_SERVICE value to 'netlify' in src/consts.ts");
 }
 
 /**
