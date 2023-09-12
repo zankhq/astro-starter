@@ -732,7 +732,7 @@ async function main() {
 		}
 		packageData.version = "0.0.1";
 		packageData.author = getGitAuthorName();
-		delete packageData.bin; // Remove the bin property from package.json
+		delete packageData.bin;
 		delete packageData.files;
 		delete packageData.main;
 		delete packageData.repository;
