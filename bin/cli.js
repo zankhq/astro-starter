@@ -78,6 +78,7 @@ const packageManagerCommands = {
 		build: "npm run build",
 		dev: "npm run dev",
 		list: "npm list",
+		add: "npm install",
 		globalAdd: "npm install -g",
 		globalList: "npm list -g",
 		remove: "npm uninstall",
@@ -88,6 +89,7 @@ const packageManagerCommands = {
 		build: "pnpm run build",
 		dev: "pnpm run dev",
 		list: "pnpm list",
+		add: "pnpm add",
 		globalAdd: "pnpm add -g",
 		globalList: "pnpm list -g",
 		remove: "pnpm remove",
@@ -98,6 +100,7 @@ const packageManagerCommands = {
 		build: "yarn build",
 		dev: "yarn dev",
 		list: "yarn list",
+		add: "yarn add",
 		globalAdd: "yarn global add",
 		globalList: "yarn global list",
 		remove: "yarn remove",
@@ -824,6 +827,22 @@ async function main() {
 		console.log(`Starting packages installation ${destination}`);
 		execSync(`${packageManagerCommands[selectedPackageManager].install}`, { stdio: "inherit", cwd: destination });
 		console.log(`Packages installed successfully in ${destination}`);
+
+		const { additionalPackages } = await inquirer.prompt([
+			{
+				type: "checkbox",
+				name: "additionalPackages",
+				message: "Which additional packages would you like to install?",
+				choices: ["gsap", "three", "three-stdlib", "@vite-pwa/astro"], // Replace these with the packages you want to offer
+			},
+		]);
+
+		if (additionalPackages.length > 0) {
+			const packagesToInstall = additionalPackages.join(" ");
+			console.log(`Installing additional packages: ${packagesToInstall} in ${destination}`);
+			execSync(`${packageManagerCommands[selectedPackageManager].add} ${packagesToInstall}`, { stdio: "inherit", cwd: destination });
+			console.log(`Additional packages installed successfully in ${destination}`);
+		}
 
 		displayWelcomeMessage(publishProject, publishProjectLocation);
 

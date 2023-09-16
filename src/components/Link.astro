@@ -8,7 +8,7 @@ type Props = HTMLAttributes<"a">;
 
 const { class: className, ...props } = Astro.props;
 
-const href = `${localeUrlPrefix}${props.href}`;
+const href = `${localeUrlPrefix}${props.href}${typeof props.href === "string" && props.href.endsWith("/") ? "" : "/"}`;
 
 const { pathname } = Astro.url;
 const isActive = href === pathname || href === pathname.replace(/\/$/, "");
@@ -17,6 +17,7 @@ const isActive = href === pathname || href === pathname.replace(/\/$/, "");
 <a href={href} class:list={[className, { active: isActive }]} {...props}>
 	<slot />
 </a>
+
 <style>
 	a {
 		display: inline-block;
