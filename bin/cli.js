@@ -350,7 +350,7 @@ function ensureWranglerCLI() {
 async function generateNetlifyToml(destination) {
 	const tomlContent = `
 [build]
-  command = "${packageManagerCommands[selectedPackageManager].build}${selectedPackageManager === "pnpm" ? "--no-frozen-lockfile" : ""}"
+  command = "${packageManagerCommands[selectedPackageManager].build} ${selectedPackageManager === "pnpm" ? "--no-frozen-lockfile" : ""}"
   functions = "netlify/functions"
   publish = "dist"
 `;
