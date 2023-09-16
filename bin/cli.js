@@ -241,9 +241,10 @@ async function copyRecursive(src, dest) {
 		if (isDirectory) {
 			await fs.mkdir(dest, { recursive: true });
 
-			const children = await fs.readdir(src);
+			const children = await fs.readdir(src, { withFileTypes: true });
 			for (const child of children) {
-				await copyRecursive(path.join(src, child), path.join(dest, child));
+				const name = child.name;
+				await copyRecursive(path.join(src, name), path.join(dest, name));
 			}
 		} else {
 			await fs.copyFile(src, dest);
