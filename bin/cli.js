@@ -353,6 +353,10 @@ async function generateNetlifyToml(destination) {
   command = "${packageManagerCommands[selectedPackageManager].build}"
   functions = "netlify/functions"
   publish = "dist"
+[build.environment]
+  PNPM_FLAGS = "--no-frozen-lockfile"
+  YARN_FLAGS = "--ignore-engines --no-lockfile"
+  NPM_FLAGS = "--no-package-lock"
 `;
 
 	const tomlPath = path.join(destination, "netlify.toml");
