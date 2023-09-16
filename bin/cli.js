@@ -233,9 +233,10 @@ async function copyRecursive(src, dest) {
 	try {
 		const stats = await fs.stat(src);
 		const isDirectory = stats.isDirectory();
-		const isExcluded = exclusions.includes(path.basename(src));
-
-		if (isExcluded) return;
+		if (isDirectory) {
+			const isExcluded = exclusions.includes(path.basename(src));
+			if (isExcluded) return;
+		}
 
 		if (isDirectory) {
 			await fs.mkdir(dest, { recursive: true });
