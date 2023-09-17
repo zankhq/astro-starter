@@ -105,6 +105,17 @@ const packageManagerCommands = {
 		globalList: "yarn global list",
 		remove: "yarn remove",
 	},
+	bun: {
+		install: "bun install",
+		run: "bun run",
+		build: "bun build",
+		dev: "bun run dev",
+		list: "bun list",
+		add: "bun add",
+		globalAdd: "bun add --global",
+		globalList: "bun list --global",
+		remove: "bun remove",
+	},
 };
 
 /**
@@ -651,6 +662,7 @@ function ensurePackageManagerInstalled(packageManager) {
 		npm: "https://www.npmjs.com/get-npm",
 		pnpm: "npm install -g pnpm",
 		yarn: "npm install -g yarn",
+		bun: "npm install -g bun",
 	};
 
 	if (!isPackageManagerInstalled(packageManager)) {
@@ -734,7 +746,7 @@ async function main() {
 				type: "list",
 				name: "packageManager",
 				message: "Which package manager would you like to use?",
-				choices: ["npm", "pnpm", "yarn"],
+				choices: ["npm", "pnpm", "yarn", "bun"],
 				default: "pnpm",
 			},
 			{
