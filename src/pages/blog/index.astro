@@ -22,32 +22,30 @@ const posts = (await getCollection("blog", (entry) => entry.slug.startsWith(`${l
 ---
 
 <Layout title="Blog">
-	<section>
-		<Container class="pt-16">
-			<ul class="grid grid-cols-2 gap-6 list-none p-0 m-0">
-				{
-					posts.map((post: any, index: number) => (
-						<li class={`${index === 0 ? "w-full text-center mb-4 col-span-2" : ""}`}>
-							<a href={post.href} class="block transition-colors duration-200">
-								<HeroImage
-									class={`${index === 0 ? "w-full" : ""} mb-2 rounded-lg hover:shadow-md`}
-									src={post.data.heroImage}
-									alt={post.data.title}
-									width={720}
-									height={360}
-								/>
-								<BlogHeader
-									pubDate={post.data.pubDate}
-									name={`title-${post.data.title}`}
-									isSubheading={true}
-									class={`${index === 0 ? "text-6xl" : ""} m-0`}>
-									{post.data.title}
-								</BlogHeader>
-							</a>
-						</li>
-					))
-				}
-			</ul>
-		</Container>
-	</section>
+	<Container class="pt-16">
+		<ul class="grid grid-cols-2 gap-6 list-none p-0 m-0">
+			{
+				posts.map((post: any, index: number) => (
+					<li class={`${index === 0 ? "w-full text-center mb-4 col-span-2" : ""}`}>
+						<a href={post.href} class="block transition-colors duration-200">
+							<HeroImage
+								class={`${index === 0 ? "w-full" : ""} mb-2 rounded-lg hover:shadow-md`}
+								src={post.data.heroImage}
+								alt={post.data.title}
+								width={720}
+								height={360}
+							/>
+							<BlogHeader
+								pubDate={post.data.pubDate}
+								name={`title-${post.data.title}`}
+								isSubheading={true}
+								class={`${index === 0 ? "text-6xl" : ""} m-0`}>
+								{post.data.title}
+							</BlogHeader>
+						</a>
+					</li>
+				))
+			}
+		</ul>
+	</Container>
 </Layout>
