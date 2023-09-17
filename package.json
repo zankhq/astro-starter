@@ -3,6 +3,7 @@
 	"type": "module",
 	"version": "0.13.3",
 	"author": "Giulio Zanchetta",
+	"description": "Astro starter template with tailwind, alpinejs, localization, blog, CMS, and comments",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -10,10 +11,6 @@
 	},
 	"bugs": "https://github.com/zankhq/astro-starter/issues",
 	"homepage": "https://github.com/zankhq/astro-starter",
-	"main": "./bin/cli.js",
-	"bin": {
-		"create-astro-starter": "./bin/cli.js"
-	},
 	"files": [
 		"*"
 	],
