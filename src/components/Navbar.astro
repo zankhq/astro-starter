@@ -9,7 +9,21 @@ const url = Astro.url;
 ---
 
 <div
-	x-data="{open: window.innerWidth < 768 ? false : true}"
+	x-data={`{
+				open: window.innerWidth < 768 ? false : true,
+				windowWidth: window.innerWidth,
+				init() {
+					this.$watch('windowWidth', value => {
+						this.open = value < 768 ? false : true;
+					});
+					window.addEventListener('resize', () => {
+						this.$nextTick(() => {
+							this.windowWidth = window.innerWidth;
+						});
+					});
+				}
+			}`}
+	x-init="init()"
 	class="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8 z-10 md:pt-2 relative">
 	<div class="p-4 flex flex-row items-center justify-between">
 		<a	href={localizePath("/", url)}
