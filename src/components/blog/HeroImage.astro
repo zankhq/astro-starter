@@ -1,6 +1,8 @@
 ---
+import { Image } from "astro:assets";
+
 type Props = {
-	src: string;
+	src: any;
 	alt: string;
 	[key: string]: any;
 };
@@ -8,4 +10,4 @@ type Props = {
 const { src, alt, ...props } = Astro.props;
 ---
 
-<img transition:name={alt} transition:animate="initial" {...props} src={src} alt={alt} />
+<Image src={src} alt={alt} {...props} transition:name={alt} transition:animate="initial" />
