@@ -54,8 +54,8 @@ export default defineConfig({
 			config: {
 				local_backend: true,
 				backend: netlifyCMSBackendConfig, // Change here if you don't use neither cloudflare pages nor netlify
-				media_folder: "public/images",
-				public_folder: "/images",
+				media_folder: "src/assets/images",
+				public_folder: "@assets/images",
 				i18n: {
 					structure: "multiple_folders",
 					locales: ["en", "it"],
