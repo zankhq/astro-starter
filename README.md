@@ -6,17 +6,17 @@
 
 ### Features:
 
-- ✅ Tailwind CSS
-- ✅ Alpine js
-- ✅ Typescript
-- ✅ Localization (with astro-i18n-aut)
-- ✅ Dark/light mode
-- ✅ Blog
-- ✅ Discussions (thanks to giscus)
-- ✅ CMS for editing blog post (thanks to decap CMS)
-- ✅ Sitemap (localized)
-- ✅ RSS (localized)
-- ❌ PWA (Follow tutorial below to add it)
+-   ✅ Tailwind CSS
+-   ✅ Alpine js
+-   ✅ Typescript
+-   ✅ Localization (with astro-i18n-aut)
+-   ✅ Dark/light mode
+-   ✅ Blog
+-   ✅ Discussions (thanks to giscus)
+-   ✅ CMS for editing blog post (thanks to decap CMS)
+-   ✅ Sitemap (localized)
+-   ✅ RSS (localized)
+-   ❌ PWA (Follow tutorial below to add it)
 
 ### 🧞 Commands
 
@@ -85,8 +85,6 @@ In this case your environment variable should look like this
 
 If you use netlify it's actually easier, you will need to change in the file `astro.config.mjs` NetlifyCMS config `config.backend.name` to git-gateway. (See https://decapcms.org/docs/git-gateway-backend/#git-gateway-with-netlify for more info)
 
-
 ### 👀 Want to learn more?
 
 Check out [Astro documentation](https://docs.astro.build) or jump into Astro [Discord server](https://astro.build/chat).
-
