@@ -22,8 +22,5 @@ pnpm-debug.log*
 # Language directories to ignore
 astro_tmp_pages_*
 
-# npm package manager cache
-.npmrc
-
 # Github Actions
 .github/workflows/publish.yml
