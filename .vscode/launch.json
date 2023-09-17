@@ -6,14 +6,6 @@
 			"name": "Development server",
 			"request": "launch",
 			"type": "node-terminal"
-		},
-		{
-			"type": "node",
-			"request": "launch",
-			"name": "Debug CLI",
-			"program": "${workspaceFolder}/bin/cli.js",
-			"skipFiles": ["<node_internals>/**"],
-			"args": [] // Any command-line arguments your CLI expects can go here.
 		}
 	]
 }
