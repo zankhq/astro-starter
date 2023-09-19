@@ -1,10 +1,29 @@
-# Astro Starter Kit
 
-![Performance](.github/images/performance.png)
+<p align="center">
+	<img src=".github/images/performance.png" />
+</p>
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/zankhq/astro-starter)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/zankhq/astro-starter)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/zankhq/astro-starter?devcontainer_path=.devcontainer/blog/devcontainer.json)
+<h1 align="center"> Astro Starter Kit</h1>
+
+<br />
+
+
+<p align="center">
+<a href="https://stackblitz.com/github/zankhq/astro-starter">
+	<img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" />
+</a>
+&nbsp;&nbsp;
+<a href="https://codesandbox.io/p/sandbox/github/zankhq/astro-starter">
+	<img src="https://assets.codesandbox.io/github/button-edit-lime.svg" />
+</a>
+&nbsp;&nbsp;
+<a href="https://codespaces.new/zankhq/astro-starter?devcontainer_path=.devcontainer/blog/devcontainer.json">
+	<img src="https://github.com/codespaces/badge.svg" />
+</a>
+</p>
+
+<br />
+
 
 ### Features:
 
