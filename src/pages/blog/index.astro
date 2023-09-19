@@ -23,10 +23,10 @@ const posts = (await getCollection("blog", (entry) => entry.slug.startsWith(`${l
 
 <Layout title="Blog">
 	<Container class="pt-16">
-		<ul class="grid grid-cols-2 gap-6 list-none p-0 m-0">
+		<ul class="m-0 grid list-none grid-cols-2 gap-6 p-0">
 			{
 				posts.map((post: any, index: number) => (
-					<li class={`${index === 0 ? "w-full text-center mb-4 col-span-2" : ""}`}>
+					<li class={`${index === 0 ? "col-span-2 mb-4 w-full text-center" : ""}`}>
 						<a href={post.href} class="block transition-colors duration-200">
 							<HeroImage
 								class={`${index === 0 ? "w-full" : ""} mb-2 rounded-lg hover:shadow-md`}
