@@ -9,6 +9,7 @@ const urlWithoutLocalePrefix = getUrlWithoutLocale(Astro.url);
 ---
 
 <select
+	aria-label="Change language"
 	class="cursor-pointer focus-visible:outline-none dark:bg-stone-800 dark:text-stone-50"
 	x-data={`{
 		currentLocale: "${currentLocale}",
