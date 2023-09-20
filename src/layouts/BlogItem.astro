@@ -12,11 +12,11 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props as P
 
 <Layout title={title} description={description}>
 	<article class="pt-16">
-		<div class="w-full">
+		<div class="w-full px-4">
 			{heroImage && <HeroImage class="mx-auto block rounded-lg shadow-md" width={1020} height={510} src={heroImage} alt={title} />}
 		</div>
-		<div class="max-w-screen-md prose mx-auto px-4 space-y-4">
-			<div class="text-center space-y-4">
+		<div class="prose mx-auto max-w-screen-md space-y-4 px-4">
+			<div class="space-y-4 text-center">
 				<Title pubDate={pubDate} updatedDate={updatedDate} name={`title-${title}`} class="m-0 mb-2">{title}</Title>
 				<hr />
 			</div>

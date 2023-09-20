@@ -39,7 +39,7 @@ const posts = (await getCollection("blog", (entry) => entry.slug.startsWith(`${l
 								pubDate={post.data.pubDate}
 								name={`title-${post.data.title}`}
 								isSubheading={true}
-								class={`${index === 0 ? "text-6xl" : ""} m-0`}>
+								class={`${index === 0 ? "text-xl md:text-2xl lg:text-3xl" : ""} m-0`}>
 								{post.data.title}
 							</BlogHeader>
 						</a>
