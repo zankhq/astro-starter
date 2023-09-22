@@ -1,8 +1,3 @@
-
-<p align="center">
-	<img src=".github/images/performance.png" />
-</p>
-
 <h1 align="center"> Astro Starter Kit</h1>
 
 <br />
