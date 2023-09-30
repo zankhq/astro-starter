@@ -8,13 +8,25 @@ const locales = Object.values(LOCALES);
 const urlWithoutLocalePrefix = getUrlWithoutLocale(Astro.url);
 ---
 
+<script>
+	import { navigate } from "astro:transitions/client";
+	import Alpine from "alpinejs";
+
+	document.addEventListener("alpine:init", () => {
+		Alpine.data("dropdownData", () => ({
+			currentLocale: "${currentLocale}",
+			changePage(event: any) {
+				const newLocaleUrl = event.target.value;
+				navigate(newLocaleUrl);
+			},
+		}));
+	});
+</script>
+
 <select
 	aria-label="Change language"
 	class="cursor-pointer focus-visible:outline-none dark:bg-stone-800 dark:text-stone-50"
-	x-data={`{
-		currentLocale: "${currentLocale}",
-		changePage: function(event) { location.href = event.target.value; }
-	}`}
+	x-data="dropdownData"
 	x-on:change="changePage($event)">
 	{
 		locales.map((locale) => (
