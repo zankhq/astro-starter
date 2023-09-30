@@ -95,8 +95,6 @@ In order to access the admin dashboard to change blog articles content you need 
 
 If you use cloudflare pages you can follow this guide https://github.com/i40west/netlify-cms-cloudflare-pages.
 
-In this case your environment variable should look like this
-
 If you use netlify it's actually easier, you will need to change in the file `astro.config.mjs` NetlifyCMS config `config.backend.name` to git-gateway. (See https://decapcms.org/docs/git-gateway-backend/#git-gateway-with-netlify for more info)
 
 ### 👀 Want to learn more?
