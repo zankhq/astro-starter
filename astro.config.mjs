@@ -35,7 +35,6 @@ export default defineConfig({
 		format: "directory",
 	},
 	integrations: [
-		mdx(),
 		sitemap({
 			i18n: {
 				locales,
@@ -50,6 +49,7 @@ export default defineConfig({
 			defaultLocale,
 			exclude: ["pages/api/**/*", "pages/rss.xml.ts", "pages/[locale]/rss.xml.ts"],
 		}),
+		mdx(),
 		NetlifyCMS({
 			config: {
 				local_backend: true,
