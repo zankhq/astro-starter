@@ -5,6 +5,7 @@ import BaseHead from "@components/BaseHead.astro";
 import Navbar from "@components/Navbar.astro";
 import Footer from "@components/Footer.astro";
 import { SITE_TITLE, SITE_DESCRIPTION } from "@src/consts";
+import { pwaInfo } from "virtual:pwa-info";
 
 const locale = getLocale(Astro.url);
 
@@ -22,6 +23,9 @@ const { image, title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.prop
 		<BaseHead title={title} description={description} image={image} />
 		{/* Comment the line below if you want to remove client side routing */}
 		<ViewTransitions />
+		{/* Comment the line below if you want to remove the service worker */}
+		{pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
+		<script src="/src/pwa.ts"></script>
 	</head>
 
 	<body>

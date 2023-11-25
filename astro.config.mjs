@@ -3,8 +3,9 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
 import alpinejs from "@astrojs/alpinejs";
+import AstroPWA from "@vite-pwa/astro";
 import { i18n, filterSitemapByDefaultLocale } from "astro-i18n-aut/integration";
-import { DEFAULT_LOCALE, LOCALES, SITE_URL, HOSTING_SERVICE, REPO, DEFAULT_BRANCH } from "./src/consts";
+import { DEFAULT_LOCALE, LOCALES, SITE_URL } from "./src/consts";
 const defaultLocale = DEFAULT_LOCALE;
 const locales = LOCALES;
 
@@ -32,6 +33,48 @@ export default defineConfig({
 			locales,
 			defaultLocale,
 			exclude: ["pages/api/**/*", "pages/rss.xml.ts", "pages/[locale]/rss.xml.ts"],
+		}),
+		AstroPWA({
+			mode: "production",
+			base: "/",
+			scope: "/",
+			includeAssets: ["favicon.svg"],
+			registerType: "autoUpdate",
+			manifest: {
+				name: "Astro starter",
+				short_name: "Astro starter",
+				theme_color: "#ffffff",
+				icons: [
+					{
+						src: "pwa-192x192.png",
+						sizes: "192x192",
+						type: "image/png",
+					},
+					{
+						src: "pwa-512x512.png",
+						sizes: "512x512",
+						type: "image/png",
+					},
+					{
+						src: "pwa-512x512.png",
+						sizes: "512x512",
+						type: "image/png",
+						purpose: "any maskable",
+					},
+				],
+			},
+			workbox: {
+				navigateFallback: "/404",
+				globPatterns: ["*.js"],
+			},
+			devOptions: {
+				enabled: false,
+				navigateFallbackAllowlist: [/^\/404$/],
+				suppressWarnings: true,
+			},
+			experimental: {
+				directoryAndTrailingSlashHandler: true,
+			},
 		}),
 	],
 });

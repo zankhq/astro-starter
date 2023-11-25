@@ -29,10 +29,10 @@
 -   ✅ Dark/light mode
 -   ✅ Blog
 -   ✅ Discussions (thanks to giscus)
--   ✅ CMS for editing blog post (thanks to decap CMS)
+-   ✅ CMS for editing blog post (thanks to Sveltia CMS)
 -   ✅ Sitemap (localized)
 -   ✅ RSS (localized)
--   ❌ PWA (Follow tutorial below to add it)
+-   ✅ PWA (thanks to Vite PWA)
 
 ### 🧞 Commands
 
@@ -48,10 +48,6 @@ All commands are run from the root of the project, from a terminal:
 | `pnpm astro -- --help` | Get help using the Astro CLI                     |
 
 If you want to switch to npm make sure to remove pnpm-lock.yaml and node_modules folder and then run `npm install`
-
-### How to add PWA
-
-TBD
 
 ### 🚀 Project Structure
 
@@ -89,9 +85,9 @@ Any static assets, like images, can be placed in the `public/` directory.
 
 You can access the admin dashboard for editing blog post at `/admin` (https://example.com/admin)
 
-For more information follow Decap CMS documentation at https://decapcms.org/docs/
+Sveltia cms uses the same configuration as Decap cms, so you can follow the documentation at https://decapcms.org/docs.
 
-In order to access the admin dashboard to change blog articles content you need to have access to the github repo, a quick way to test it test would be fork the repo and than configure decap cms accordingly to your cloud provider (netlify, cloudflare, vercel, etc...).
+In order to access the admin dashboard to change blog articles content you need to have access to the github repo, a quick way to test it test would be fork the repo and than configure sveltia cms accordingly to your cloud provider (netlify, cloudflare, vercel, etc...).
 
 If you use cloudflare pages you can follow this guide https://github.com/i40west/netlify-cms-cloudflare-pages.
 

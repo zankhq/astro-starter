@@ -25,3 +25,5 @@ astro_tmp_pages_*
 
 # Local Netlify folder
 .netlify
+
+dev-dist/
