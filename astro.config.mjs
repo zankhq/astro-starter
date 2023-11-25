@@ -64,12 +64,10 @@ export default defineConfig({
 				],
 			},
 			workbox: {
-				navigateFallback: "/404",
 				globPatterns: ["*.js"],
 			},
 			devOptions: {
 				enabled: false,
-				navigateFallbackAllowlist: [/^\/404$/],
 				suppressWarnings: true,
 			},
 			experimental: {
