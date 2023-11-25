@@ -5,26 +5,9 @@ import tailwind from "@astrojs/tailwind";
 import alpinejs from "@astrojs/alpinejs";
 import { i18n, filterSitemapByDefaultLocale } from "astro-i18n-aut/integration";
 import { DEFAULT_LOCALE, LOCALES, SITE_URL, HOSTING_SERVICE, REPO, DEFAULT_BRANCH } from "./src/consts";
-
+import sveltiaCms from "astro-sveltia-cms";
 const defaultLocale = DEFAULT_LOCALE;
 const locales = LOCALES;
-
-let netlifyCMSBackendConfig = {
-	name: "github",
-	repo: REPO,
-	branch: DEFAULT_BRANCH,
-	base_url: SITE_URL,
-	auth_endpoint: "/api/auth",
-};
-
-if (HOSTING_SERVICE === "netlify") {
-	netlifyCMSBackendConfig = {
-		name: "git-gateway",
-		repo: REPO,
-		branch: DEFAULT_BRANCH,
-		base_url: SITE_URL,
-	};
-}
 
 // https://astro.build/config
 export default defineConfig({
@@ -40,7 +23,9 @@ export default defineConfig({
 				locales,
 				defaultLocale,
 			},
-			filter: filterSitemapByDefaultLocale({ defaultLocale }),
+			filter: filterSitemapByDefaultLocale({
+				defaultLocale,
+			}),
 		}),
 		tailwind(),
 		alpinejs(),
@@ -49,5 +34,6 @@ export default defineConfig({
 			defaultLocale,
 			exclude: ["pages/api/**/*", "pages/rss.xml.ts", "pages/[locale]/rss.xml.ts"],
 		}),
+		sveltiaCms(),
 	],
 });

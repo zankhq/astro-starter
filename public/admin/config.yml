@@ -5,7 +5,6 @@ backend:
     branch: master
 
 media_folder: "src/assets/images"
-
 public_folder: "@assets/images"
 
 i18n:
@@ -20,6 +19,8 @@ collections:
       i18n: true
       label: "Blog Posts"
       folder: "src/content/blog"
+      media_folder: "/src/assets/images/blog"
+      public_folder: "@assets/images/blog"
       create: true
       delete: true
       fields:
