@@ -4,7 +4,7 @@ backend:
     name: "github"
     repo: zankhq/astro-starter
     branch: main
-    base_url: https://sveltia-cms-auth.majestico.workers.dev
+    base_url: https://cms.majestico.workers.dev
 
 media_folder: "src/assets/images"
 public_folder: "@assets/images"
