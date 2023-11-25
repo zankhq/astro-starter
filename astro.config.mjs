@@ -6,6 +6,7 @@ import alpinejs from "@astrojs/alpinejs";
 import { i18n, filterSitemapByDefaultLocale } from "astro-i18n-aut/integration";
 import { DEFAULT_LOCALE, LOCALES, SITE_URL, HOSTING_SERVICE, REPO, DEFAULT_BRANCH } from "./src/consts";
 import sveltiaCms from "astro-sveltia-cms";
+import cloudflare from "@astrojs/cloudflare";
 const defaultLocale = DEFAULT_LOCALE;
 const locales = LOCALES;
 
@@ -36,4 +37,6 @@ export default defineConfig({
 		}),
 		sveltiaCms(),
 	],
+	output: "server",
+	adapter: cloudflare(),
 });
