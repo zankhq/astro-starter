@@ -1,5 +1,7 @@
 local_backend: true
 
+logo_url: /logo.svg
+
 backend:
     name: "github"
     repo: zankhq/astro-starter
