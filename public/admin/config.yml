@@ -25,6 +25,7 @@ collections:
       folder: "src/content/blog"
       media_folder: "/src/assets/images/blog"
       public_folder: "@assets/images/blog"
+      format: "frontmatter"
       extension: "mdx"
       create: true
       delete: true
