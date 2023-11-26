@@ -12,6 +12,8 @@ const locale = getLocale(Astro.url);
 // replaced dynamically
 const buildDate = new Date(__DATE__);
 
+const prodEnv = import.meta.env.PROD;
+
 type Props = {
 	title?: string;
 	description?: string;
@@ -27,8 +29,8 @@ const { image, title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.prop
 		{/* Comment the line below if you want to remove client side routing */}
 		<ViewTransitions />
 		{/* Comment the line below if you want to remove the service worker */}
-		{pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
-		<script src="/src/pwa.ts"></script>
+		{pwaInfo && prodEnv && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
+		{prodEnv && <script src="/src/pwa.ts" />}
 	</head>
 
 	<body>

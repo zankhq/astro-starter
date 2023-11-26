@@ -10,6 +10,8 @@ import { DEFAULT_LOCALE, LOCALES, SITE_URL } from "./src/consts";
 const defaultLocale = DEFAULT_LOCALE;
 const locales = LOCALES;
 
+const prodEnv = import.meta.env.PROD;
+
 // https://astro.build/config
 export default defineConfig({
 	site: SITE_URL,
@@ -18,7 +20,7 @@ export default defineConfig({
 		format: "directory",
 	},
 	vite: {
-		logLevel: "info",
+		logLevel: "error",
 		define: {
 			__DATE__: `'${new Date()}'`,
 		},
@@ -42,7 +44,7 @@ export default defineConfig({
 			exclude: ["pages/api/**/*", "pages/rss.xml.ts", "pages/[locale]/rss.xml.ts"],
 		}),
 		AstroPWA({
-			mode: "production",
+			mode: prodEnv ? "production" : "development",
 			base: "/",
 			scope: "/",
 			includeAssets: ["favicon.svg"],
