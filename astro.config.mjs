@@ -43,47 +43,47 @@ export default defineConfig({
 			defaultLocale,
 			exclude: ["pages/api/**/*", "pages/rss.xml.ts", "pages/[locale]/rss.xml.ts"],
 		}),
-		AstroPWA({
-			mode: prodEnv ? "production" : "development",
-			base: "/",
-			scope: "/",
-			includeAssets: ["favicon.svg"],
-			registerType: "autoUpdate",
-			manifest: {
-				name: "Astro starter",
-				short_name: "Astro starter",
-				theme_color: "#ffffff",
-				icons: [
-					{
-						src: "pwa-192x192.png",
-						sizes: "192x192",
-						type: "image/png",
-					},
-					{
-						src: "pwa-512x512.png",
-						sizes: "512x512",
-						type: "image/png",
-					},
-					{
-						src: "pwa-512x512.png",
-						sizes: "512x512",
-						type: "image/png",
-						purpose: "any maskable",
-					},
-				],
-			},
-			workbox: {
-				navigateFallback: "/",
-				globPatterns: ["**/*.{css,js,html,svg,png,ico,txt}"],
-			},
-			devOptions: {
-				enabled: true,
-				suppressWarnings: true,
-				navigateFallbackAllowlist: [/^\//],
-			},
-			experimental: {
-				directoryAndTrailingSlashHandler: true,
-			},
-		}),
+		// AstroPWA({
+		// 	mode: prodEnv ? "production" : "development",
+		// 	base: "/",
+		// 	scope: "/",
+		// 	includeAssets: ["favicon.svg"],
+		// 	registerType: "autoUpdate",
+		// 	manifest: {
+		// 		name: "Astro starter",
+		// 		short_name: "Astro starter",
+		// 		theme_color: "#ffffff",
+		// 		icons: [
+		// 			{
+		// 				src: "pwa-192x192.png",
+		// 				sizes: "192x192",
+		// 				type: "image/png",
+		// 			},
+		// 			{
+		// 				src: "pwa-512x512.png",
+		// 				sizes: "512x512",
+		// 				type: "image/png",
+		// 			},
+		// 			{
+		// 				src: "pwa-512x512.png",
+		// 				sizes: "512x512",
+		// 				type: "image/png",
+		// 				purpose: "any maskable",
+		// 			},
+		// 		],
+		// 	},
+		// 	workbox: {
+		// 		navigateFallback: "/",
+		// 		globPatterns: ["**/*.{css,js,html,svg,png,ico,txt}"],
+		// 	},
+		// 	devOptions: {
+		// 		enabled: true,
+		// 		suppressWarnings: true,
+		// 		navigateFallbackAllowlist: [/^\//],
+		// 	},
+		// 	experimental: {
+		// 		directoryAndTrailingSlashHandler: true,
+		// 	},
+		// }),
 	],
 });

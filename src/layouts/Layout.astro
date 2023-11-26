@@ -29,21 +29,25 @@ const { image, title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.prop
 		{/* Comment the line below if you want to remove client side routing */}
 		<ViewTransitions />
 		{/* Comment the line below if you want to remove the service worker */}
-		{pwaInfo && prodEnv && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
-		<script>
-			import { registerSW } from "virtual:pwa-register";
-			registerSW({
-				immediate: true,
-				onRegisteredSW(swScriptUrl) {
-					// eslint-disable-next-line no-console
-					// console.log("SW registered: ", swScriptUrl);
-				},
-				onOfflineReady() {
-					// eslint-disable-next-line no-console
-					// console.log("PWA application ready to work offline");
-				},
-			});
-		</script>
+		{
+			/* Disable sw until figure out the problems
+			{pwaInfo && prodEnv && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
+			<script>
+				import { registerSW } from "virtual:pwa-register";
+				registerSW({
+					immediate: true,
+					onRegisteredSW(swScriptUrl) {
+						// eslint-disable-next-line no-console
+						// console.log("SW registered: ", swScriptUrl);
+					},
+					onOfflineReady() {
+						// eslint-disable-next-line no-console
+						// console.log("PWA application ready to work offline");
+					},
+				});
+			</script>
+			*/
+		}
 	</head>
 
 	<body>
