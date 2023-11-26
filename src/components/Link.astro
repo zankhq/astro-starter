@@ -1,10 +1,7 @@
 ---
-import type { HTMLAttributes } from "astro/types";
 import { getLocaleUrlPrefix } from "astro-i18n-aut";
 
 const localeUrlPrefix = getLocaleUrlPrefix(Astro.url);
-
-type Props = HTMLAttributes<"a">;
 
 const { class: className, ...props } = Astro.props;
 
