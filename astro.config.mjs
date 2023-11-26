@@ -43,6 +43,7 @@ export default defineConfig({
 			defaultLocale,
 			exclude: ["pages/api/**/*", "pages/rss.xml.ts", "pages/[locale]/rss.xml.ts"],
 		}),
+		// Disable sw until figure out the problems
 		// AstroPWA({
 		// 	mode: prodEnv ? "production" : "development",
 		// 	base: "/",
