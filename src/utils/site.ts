@@ -5,6 +5,6 @@
  * @returns
  */
 export function convertPageTitle(pageTitle: string, siteTitle: string): string {
-	let titleSeperator = " - ";
-	return pageTitle + titleSeperator + siteTitle;
+	let titleSeparator = " - ";
+	return pageTitle + titleSeparator + siteTitle;
 }
