@@ -65,11 +65,12 @@ export default defineConfig({
 				],
 			},
 			workbox: {
-				globPatterns: ["*.js"],
+				navigateFallback: "/",
+				globPatterns: ["**/*.{css,js,html,svg,png,ico,txt}"],
 			},
 			devOptions: {
-				enabled: false,
-				suppressWarnings: true,
+				enabled: true,
+				navigateFallbackAllowlist: [/^\//],
 			},
 			experimental: {
 				directoryAndTrailingSlashHandler: true,
