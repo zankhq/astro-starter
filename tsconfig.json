@@ -13,6 +13,7 @@
 			"@pages/*": ["pages/*"],
 			"@assets/*": ["assets/*"],
 			"@locales/*": ["locales/*"]
-		}
+		},
+		"types": ["vite-plugin-pwa/info"]
 	}
 }

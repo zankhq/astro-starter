@@ -1,11 +1,13 @@
 ---
 const today: Date = new Date();
+
+const { buildDate } = Astro.props;
 ---
 
-<footer transition:persist class="p-4 pt-16 pb-16 bg-gradient-to-br text-center text-gray-500">
-	&copy; {today.getFullYear()} Your name here. All rights reserved.
+<footer transition:persist class="bg-gradient-to-br p-4 pb-16 pt-16 text-center text-gray-500">
+	&copy; {today.getFullYear()} Your name here. All rights reserved. Build at {buildDate}.
 
-	<div class="flex justify-center space-x-4 mt-4">
+	<div class="mt-4 flex justify-center space-x-4">
 		<a href="https://m.webtoo.ls/@astro" target="_blank" class="text-gray-500 hover:text-gray-700">
 			<span class="sr-only">Follow Astro on Mastodon</span>
 			<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32" astro-icon="social/mastodon">

@@ -9,6 +9,9 @@ import { pwaInfo } from "virtual:pwa-info";
 
 const locale = getLocale(Astro.url);
 
+// replaced dynamically
+const buildDate = __DATE__;
+
 type Props = {
 	title?: string;
 	description?: string;
@@ -33,6 +36,6 @@ const { image, title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.prop
 		<main>
 			<slot />
 		</main>
-		<Footer />
+		<Footer {buildDate} />
 	</body>
 </html>

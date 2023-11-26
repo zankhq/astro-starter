@@ -17,6 +17,12 @@ export default defineConfig({
 	build: {
 		format: "directory",
 	},
+	vite: {
+		logLevel: "info",
+		define: {
+			__DATE__: `'${new Date().toISOString()}'`,
+		},
+	},
 	integrations: [
 		mdx(),
 		sitemap({
