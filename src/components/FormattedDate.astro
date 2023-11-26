@@ -5,9 +5,10 @@ const locale = getLocale(Astro.url);
 
 interface Props {
 	date: Date;
+	includeTime?: boolean;
 }
 
-const { date } = Astro.props;
+const { date, includeTime } = Astro.props;
 ---
 
 <time datetime={date.toISOString()}>
@@ -16,6 +17,8 @@ const { date } = Astro.props;
 			year: "numeric",
 			month: "short",
 			day: "numeric",
+			hour: includeTime ? "numeric" : undefined,
+			minute: includeTime ? "numeric" : undefined,
 		})
 	}
 </time>

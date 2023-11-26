@@ -20,7 +20,7 @@ export default defineConfig({
 	vite: {
 		logLevel: "info",
 		define: {
-			__DATE__: `'${new Date().toISOString()}'`,
+			__DATE__: `'${new Date()}'`,
 		},
 	},
 	integrations: [

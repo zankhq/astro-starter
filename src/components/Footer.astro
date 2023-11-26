@@ -1,11 +1,17 @@
 ---
+import FormattedDate from "@components/FormattedDate.astro";
+
 const today: Date = new Date();
+
+interface Props {
+	buildDate: Date;
+}
 
 const { buildDate } = Astro.props;
 ---
 
 <footer transition:persist class="bg-gradient-to-br p-4 pb-16 pt-16 text-center text-gray-500">
-	&copy; {today.getFullYear()} Your name here. All rights reserved. Build at {buildDate}.
+	&copy; {today.getFullYear()} Your name here. All rights reserved. Built at <FormattedDate date={buildDate} includeTime={true} />.
 
 	<div class="mt-4 flex justify-center space-x-4">
 		<a href="https://m.webtoo.ls/@astro" target="_blank" class="text-gray-500 hover:text-gray-700">

@@ -10,7 +10,7 @@ import { pwaInfo } from "virtual:pwa-info";
 const locale = getLocale(Astro.url);
 
 // replaced dynamically
-const buildDate = __DATE__;
+const buildDate = new Date(__DATE__);
 
 type Props = {
 	title?: string;
