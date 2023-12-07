@@ -3,10 +3,12 @@ local_backend: true
 logo_url: /logo.svg
 
 backend:
-    name: "github"
-    repo: zankhq/astro-starter
+    name: github
     branch: main
-    base_url: https://cms.majestico.workers.dev
+    repo: zankhq/astro-starter
+    site_domain: astrostarter.majestico.it
+    base_url: https://astrostarter.majestico.it
+    auth_endpoint: oauth
 
 media_folder: "src/assets/images"
 public_folder: "@assets/images"
