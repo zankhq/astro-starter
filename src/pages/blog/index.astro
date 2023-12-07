@@ -8,8 +8,6 @@ import { getLocale, getLocaleUrlPrefix } from "astro-i18n-aut";
 import Container from "@src/components/Container.astro";
 import HeroImage from "@src/components/blog/HeroImage.astro";
 
-export const prerender = true;
-
 const locale = getLocale(Astro.url) ?? DEFAULT_LOCALE;
 const localeUrlPrefix = getLocaleUrlPrefix(Astro.url);
 
