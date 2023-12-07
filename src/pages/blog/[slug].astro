@@ -4,6 +4,8 @@ import BlogItem from "@layouts/BlogItem.astro";
 import { getLocale } from "astro-i18n-aut";
 import { DEFAULT_LOCALE } from "../../consts";
 
+export const prerender = true;
+
 export async function getStaticPaths() {
 	const posts = await getCollection("blog", (entry) => entry.slug.startsWith(DEFAULT_LOCALE + "/"));
 	return posts.map((post) => ({
