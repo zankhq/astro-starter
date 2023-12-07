@@ -39,8 +39,8 @@ dependencies:
     specifier: ^0.5.0
     version: 0.5.0(astro@4.0.3)(kleur@4.1.5)
   astro-sveltia-cms:
-    specifier: ^0.0.7
-    version: 0.0.7(astro@4.0.3)
+    specifier: ^0.0.9
+    version: 0.0.9(astro@4.0.3)
   sharp:
     specifier: ^0.33.0
     version: 0.33.0
@@ -1356,8 +1356,8 @@ packages:
     resolution: {integrity: sha512-7gq6lhibCM8FuzZIJlbLLWP5EJ9KL2/4XqeFrAg9O6ZK2xMFxJ5ubKf+a0VJwwTu8W8Xr421CmpiXu6Hq7n/7Q==}
     dev: true
 
-  /astro-sveltia-cms@0.0.7(astro@4.0.3):
-    resolution: {integrity: sha512-WuCezxSEAU++z9qWF/pJ0ylHZHaOdyViXpdxlsomLWLnV/wsgP2TLo/FzH02LYONJmvVHAhQuR8mFhXH91isTw==}
+  /astro-sveltia-cms@0.0.9(astro@4.0.3):
+    resolution: {integrity: sha512-J3R/j5zygeJfF8BuOi7leiVVxluA2qX7JMUPTqmeovTMsKl7G2Ci4XLFEKdf9yrA2TCz+ouAYnfkyjVdMwKfAw==}
     peerDependencies:
       astro: ^2.0.0 || ^3.0.0
     dependencies:
