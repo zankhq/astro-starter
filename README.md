@@ -32,7 +32,7 @@
 -   ✅ CMS for editing blog post (thanks to Sveltia CMS)
 -   ✅ Sitemap (localized)
 -   ✅ RSS (localized)
--   ✅ PWA (thanks to Vite PWA)
+-   ✅ PWA
 
 ### 🧞 Commands
 
