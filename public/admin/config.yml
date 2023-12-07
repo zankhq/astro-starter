@@ -9,6 +9,7 @@ backend:
     site_domain: astrostarter.majestico.it
     base_url: https://astrostarter.majestico.it
     auth_endpoint: oauth
+    automatic_deployments: false
 
 media_folder: "src/assets/images"
 public_folder: "@assets/images"
