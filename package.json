@@ -24,7 +24,6 @@
 	},
 	"dependencies": {
 		"@astrojs/alpinejs": "^0.3.1",
-		"@astrojs/cloudflare": "^8.0.0",
 		"@astrojs/mdx": "^2.0.0",
 		"@astrojs/rss": "^4.0.1",
 		"@astrojs/sitemap": "^3.0.3",
