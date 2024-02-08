@@ -67,7 +67,7 @@ const url = Astro.url;
 					item.children && item.children.length ? (
 						<div @click.away="open = false" class="relative" x-data="{ open: false }">
 							<button @click="open = !open" style="link"  class="mt-[2px]">
-								Title
+                {item.title}
 								<svg
 									fill="currentColor"
 									viewBox="0 0 20 20"
@@ -91,8 +91,8 @@ const url = Astro.url;
 								class="absolute mt-2 bg-white right-0 w-full origin-top-right rounded-md md:w-48 outline-2 border border-gray-300">
 								<div class="px-2 py-2 rounded-md shadow dark:bg-gray-800">
 									{ item.children.map((subitem) =>
-										<HeaderLink href={item.href}>
-											{item.title}
+										<HeaderLink href={subitem.href}>
+											{subitem.title}
 										</HeaderLink>
 									)}
 								</div>
