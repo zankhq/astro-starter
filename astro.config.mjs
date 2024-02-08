@@ -33,7 +33,6 @@ export default defineConfig({
 				defaultLocale,
 			}),
 		}),
-		sveltiaCMS(),
 		tailwind({
 			applyBaseStyles: false,
 		}),
