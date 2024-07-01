@@ -11,9 +11,7 @@
 	},
 	"bugs": "https://github.com/zankhq/astro-starter/issues",
 	"homepage": "https://github.com/zankhq/astro-starter",
-	"files": [
-		"*"
-	],
+	"files": ["*"],
 	"scripts": {
 		"dev": "astro dev",
 		"start": "astro dev",
@@ -23,27 +21,27 @@
 		"pwa:generate-assets": "pwa-assets-generator --preset minimal public/logo.svg"
 	},
 	"dependencies": {
-		"@astrojs/alpinejs": "^0.3.1",
-		"@astrojs/mdx": "^2.0.0",
-		"@astrojs/rss": "^4.0.1",
-		"@astrojs/sitemap": "^3.0.3",
-		"@astrojs/tailwind": "^5.0.3",
-		"@fontsource-variable/inter": "^5.0.16",
-		"@types/alpinejs": "^3.13.5",
-		"alpinejs": "^3.13.3",
-		"astro": "^4.0.3",
+		"@astrojs/alpinejs": "^0.4.0",
+		"@astrojs/mdx": "^3.1.2",
+		"@astrojs/rss": "^4.0.7",
+		"@astrojs/sitemap": "^3.1.6",
+		"@astrojs/tailwind": "^5.1.0",
+		"@fontsource-variable/inter": "^5.0.18",
+		"@types/alpinejs": "^3.13.10",
+		"alpinejs": "^3.14.1",
+		"astro": "^4.11.3",
 		"astro-i18n-aut": "^0.7.0",
-		"sharp": "^0.33.0",
-		"tailwindcss": "^3.3.6",
-		"workbox-window": "^7.0.0"
+		"tailwindcss": "^3.4.4",
+		"workbox-window": "^7.1.0"
 	},
 	"devDependencies": {
-		"@vite-pwa/assets-generator": "^0.0.11",
-		"astro-icon": "^0.8.2",
-		"astro-seo": "^0.8.0",
-		"prettier": "^3.1.0",
-		"prettier-plugin-astro": "^0.12.2",
-		"prettier-plugin-tailwindcss": "^0.5.9"
+		"@vite-pwa/assets-generator": "^0.2.4",
+		"astro-icon": "^1.1.0",
+		"astro-seo": "^0.8.4",
+		"prettier": "^3.3.2",
+		"sharp": "0.33.4",
+		"prettier-plugin-astro": "^0.14.0",
+		"prettier-plugin-tailwindcss": "^0.6.5"
 	},
 	"prettier": {
 		"tabWidth": 4,
@@ -51,9 +49,11 @@
 		"bracketSameLine": true,
 		"printWidth": 150,
 		"htmlWhitespaceSensitivity": "ignore",
-		"plugins": [
-			"prettier-plugin-astro",
-			"prettier-plugin-tailwindcss"
-		]
+		"plugins": ["prettier-plugin-astro", "prettier-plugin-tailwindcss"]
+	},
+	"overrides": {
+		"sharp": "0.33.4",
+		"string-width": "4.1.0",
+		"strip-ansi": "5.2.0"
 	}
 }

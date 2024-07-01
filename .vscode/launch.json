@@ -2,10 +2,28 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"command": "call ./node_modules/.bin/astro dev",
-			"name": "Development server",
+			"command": "call .\\node_modules\\.bin\\astro dev",
+			"name": "server",
 			"request": "launch",
-			"type": "node-terminal"
+			"type": "node-terminal",
+			"internalConsoleOptions": "neverOpen"
+		},
+		{
+			"type": "chrome",
+			"request": "launch",
+			"name": "client",
+			"url": "http://localhost:4321",
+			"webRoot": "${workspaceFolder}/src",
+			"sourceMapPathOverrides": {
+				"vite:///src/*": "${webRoot}/*"
+			},
+			"skipFiles": ["**/node_modules/**"]
+		}
+	],
+	"compounds": [
+		{
+			"name": "Debug Server and Client",
+			"configurations": ["server", "client"]
 		}
 	]
 }
