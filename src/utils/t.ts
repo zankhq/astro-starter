@@ -2,11 +2,11 @@
  * From https://github.com/trktml/lotusforafrica/blob/main/src/utils/translationTools.ts
  */
 
-import { getLocale } from "astro-i18n-aut";
 import { DEFAULT_LOCALE, LOCALES } from "@src/consts";
+import { getLocale } from "astro-i18n-aut";
 
-import it from "@locales/it.json";
 import en from "@locales/en.json";
+import it from "@locales/it.json";
 
 const handler = {
 	get(target: any, prop: any, receiver: any) {
@@ -26,7 +26,7 @@ export const locales = LOCALES;
  * @returns
  */
 export default function t(astroUrl: URL): Locales {
-	let locale = getLocale(astroUrl);
+	const locale = getLocale(astroUrl);
 
 	switch (locale) {
 		case "it":
@@ -36,17 +36,43 @@ export default function t(astroUrl: URL): Locales {
 	}
 }
 
+export function tFn(astroUrl: URL) {
+	const locale = getLocale(astroUrl);
+	let translations: any;
+
+	switch (locale) {
+		case "it":
+			translations = it_proxy;
+			break;
+		default:
+			translations = en_proxy;
+			break;
+	}
+
+	return (key: string): string => {
+		if (key in translations) {
+			return translations[key];
+		}
+		console.warn(`Missing translation key: ${key}`);
+		return key;
+	};
+}
+
 /**
  *
  * @param link Localize a specific path
  * @param astroUrl
  * @returns
  */
-export function localizePath(link: string | URL, astroUrl: string | URL): string {
-	let locale = getLocale(astroUrl);
-	let localizedLink: string = "";
+export function localizePath(
+	link: string | URL,
+	astroUrl: string | URL,
+): string {
+	const locale = getLocale(astroUrl);
+	let localizedLink = "";
 	if (locale && locale !== defaultLocale) {
-		let localeLink = `/${getLocale(astroUrl) ?? ""}/${link}`.replaceAll("//", "/") ?? "";
+		const localeLink =
+			`/${getLocale(astroUrl) ?? ""}/${link}`.replaceAll("//", "/") ?? "";
 		localizedLink = localeLink;
 	} else {
 		localizedLink = String(link);

@@ -1,11 +1,14 @@
 ---
-import HeaderLink from "@components/Link.astro";
 import LanguageSelector from "@components/LanguageSelector.astro";
-import { localizePath } from "@utils/t.ts";
+import HeaderLink from "@components/Link.astro";
 import ThemeSelector from "@components/ThemeSelector.astro";
-import { SITE_TITLE, PAGES } from "@src/consts";
+import { PAGES, SITE_TITLE } from "@src/consts";
+import { localizePath } from "@utils/t.ts";
+import { tFn } from "@utils/t.ts";
 
 const url = Astro.url;
+
+const t = tFn(Astro.url);
 ---
 
 <header
@@ -100,7 +103,7 @@ const url = Astro.url;
 						</div>
 					) : (
 						<HeaderLink href={item.href}>
-							{item.title}
+							{t(item.title)}
 						</HeaderLink>
 					)
 				)
