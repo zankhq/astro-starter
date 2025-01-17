@@ -15,10 +15,13 @@
 <a href="https://codespaces.new/zankhq/astro-starter?devcontainer_path=.devcontainer/blog/devcontainer.json">
 	<img src="https://github.com/codespaces/badge.svg" />
 </a>
+&nbsp;&nbsp;
+<a href="https://app.codeanywhere.com/#https://github.com/zankhq/astro-starter">
+	<img src="https://codeanywhere.com/img/open-in-codeanywhere-btn.svg" />
+</a>
 </p>
 
 <br />
-
 
 ### Features:
 
